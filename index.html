@@ -2,184 +2,340 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cloudz.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CLOUDZ</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
-        * { cursor: none !important; }
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; color: white;
-            font-family: 'Inter', sans-serif; overflow: hidden;
-        }
-        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 1; }
-        
-        /* --- Overlay --- */
-        #overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: flex;
-            align-items: center; justify-content: center; transition: opacity 0.8s ease;
-        }
-        #overlay p { letter-spacing: 5px; font-weight: 300; color: #fff; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        /* --- Custom Cursor --- */
-        #cursor {
-            position: fixed; top: 0; left: 0; width: 18px; height: 18px;
-            background: white; pointer-events: none; z-index: 99999;
-            clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
-            transform: translate(-50%, -50%); transition: transform 0.1s ease;
-        }
-        #cursor.glowing {
-            width: 32px; height: 32px;
-            background: radial-gradient(circle, #ffffff 20%, #00d2ff 100%);
-            filter: drop-shadow(0 0 10px #00d2ff) drop-shadow(0 0 25px #00d2ff);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            cursor: none !important;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Content Layout --- */
-        .content {
-            position: relative; z-index: 2; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; height: 100vh;
-            text-align: center; pointer-events: none;
-        }
-        h1 { font-size: 4.5rem; letter-spacing: 1.2rem; margin-bottom: 20px; text-transform: uppercase; font-weight: 700; }
-        
-        .info-container { display: flex; flex-direction: column; gap: 15px; pointer-events: auto; }
-        
-        .discord-tag { 
-            background: rgba(255, 255, 255, 0.02); padding: 15px 35px; 
-            border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.08); 
-            font-size: 0.85rem; color: #777; 
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .cashapp-btn, .dropdown-toggle { 
-            background: white; color: black; padding: 15px 35px; 
-            border-radius: 4px; text-decoration: none; font-weight: 700; 
-            font-size: 0.9rem; transition: 0.4s; display: block;
+        /* SPINNING RETICLE CURSOR */
+        #cursor-wrapper {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
         }
 
-        /* --- Dropdown Styles --- */
-        .dropdown { position: relative; display: inline-block; width: 100%; }
+        .reticle-part {
+            position: absolute;
+            border: 2px solid #fff;
+            width: 15px;
+            height: 15px;
+            transition: width 0.2s, border-color 0.2s;
+        }
+
+        #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
+        #reticle-top-right { top: -12px; right: -12px; border-left: none; border-bottom: none; }
+        #reticle-bottom-left { bottom: -12px; left: -12px; border-right: none; border-top: none; }
+        #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
+
+        #cursor-dot {
+            width: 5px; height: 5px; background: #fff; border-radius: 50%;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        .hover-active .reticle-part { width: 25px; height: 25px; border-color: #0096ff; }
+
+        /* UI ELEMENTS */
+        #particles-js { position: absolute; inset: 0; z-index: 1; }
+
+        #info-panel {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 420px; max-width: 90vw;
+            background: #050505; border: 1px solid #fff; padding: 25px; z-index: 8000;
+        }
+
+        .content-wrapper {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+
+        h1.title { font-size: clamp(3.5rem, 12vw, 7rem); letter-spacing: clamp(10px, 3vw, 30px); font-weight: 900; text-transform: uppercase; }
+
+        .btn-style {
+            width: 280px; padding: 15px; border: 1px solid #fff;
+            background: rgba(0,0,0,0.7); color: #fff; text-align: center;
+            text-decoration: none; letter-spacing: 2px; transition: 0.2s;
+        }
+
+        .btn-style:hover { border-color: #0096ff; color: #0096ff; }
+        .cashapp-btn { background: #fff; color: #000; font-weight: bold; }
+
+        /* DROPDOWN */
+        .dropdown { position: relative; width: 280px; }
         .dropdown-content {
-            display: none; position: absolute; background-color: #050505;
-            min-width: 100%; border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 5; margin-top: 5px; border-radius: 4px;
+            display: none; position: absolute; top: 100%; left: 0;
+            width: 100%; background: #000; border: 1px solid #fff; z-index: 20;
         }
-        .dropdown-content a {
-            color: #888; padding: 12px 16px; text-decoration: none;
-            display: block; font-size: 0.8rem; font-weight: 700; transition: 0.3s;
+        .dropdown-content button {
+            width: 100%; padding: 12px; background: none; border: none;
+            color: #fff; font-family: inherit; border-bottom: 1px solid #222;
         }
-        .dropdown-content a:hover { color: white; background: rgba(255, 255, 255, 0.05); }
-        .dropdown:hover .dropdown-content { display: block; }
 
-        /* --- Game Modal --- */
+        /* GAME MODAL */
         #game-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 20000; flex-direction: column;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.98); z-index: 5000;
+            flex-direction: column; align-items: center; justify-content: center;
         }
-        #game-modal iframe { width: 100%; height: 100%; border: none; background: #000; }
-        .close-game {
-            position: absolute; top: 20px; right: 20px; color: white;
-            font-weight: 700; background: rgba(255,255,255,0.1);
-            padding: 10px 20px; border-radius: 5px; pointer-events: auto;
+        #game-canvas { background: #000; border: 1px solid #333; }
+        #game-overlay { 
+            position: absolute; display: none; flex-direction: column; 
+            align-items: center; background: rgba(0,0,0,0.8); padding: 20px; border: 1px solid #fff;
         }
 
-        #music-container { position: absolute; left: -9999px; top: -9999px; visibility: hidden; }
+        #intro-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 9000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; transition: 0.5s;
+        }
+
+        body.mobile-mode #cursor-wrapper { display: none; }
+        body.mobile-mode * { cursor: auto !important; }
     </style>
 </head>
 <body>
 
-    <div id="overlay" onclick="enterSite()">
-        <p>[- CLICK TO ENTER -]</p>
+    <div id="music-player" style="display:none;"></div>
+
+    <button id="info-btn" class="hover-target" style="position:fixed; top:20px; left:20px; z-index:100; background:none; color:white; border:1px solid white; padding:5px 10px;" onclick="toggleInfo(true)">INFO</button>
+
+    <div id="info-panel">
+        <button class="hover-target" style="float:right; background:none; border:none; color:white; font-size:1.2rem;" onclick="toggleInfo(false)">[X]</button>
+        <p>Hi, I'm Cloudz. Pretty sure you figured that out already from the giant "CLOUDZ" text on the mainpage.</p>
+        <p>I do a lot of coding, especially with Python. I'm currently trying to learn every major language I want how to know to make whatever I want.</p>
+        <p>See that Cash App button? If you want to support me, you can donate there or use it for business (yes you have to pay which is negotiable). If you want to talk business for an app or a website, DM me on discord.</p>
+        <p style="font-size:0.8rem; opacity:0.5;">Anyway, you can close this now.</p>
     </div>
 
-    <div id="cursor"></div>
+    <div id="cursor-wrapper">
+        <div id="reticle-top-left" class="reticle-part"></div>
+        <div id="reticle-top-right" class="reticle-part"></div>
+        <div id="reticle-bottom-left" class="reticle-part"></div>
+        <div id="reticle-bottom-right" class="reticle-part"></div>
+        <div id="cursor-dot"></div>
+    </div>
+
+    <div id="intro-overlay">
+        <div class="hover-target" style="font-size: 1.5rem; letter-spacing: 5px;" onclick="enterSite()">CLICK TO ENTER</div>
+        <button id="mobile-toggle" class="hover-target" style="background:none; border:1px solid #444; color:#666; padding:10px 20px;" onclick="setMobile(event)">ARE YOU ON MOBILE?</button>
+    </div>
+
     <div id="particles-js"></div>
 
-    <div id="game-modal">
-        <div class="close-game hover-target" onclick="closeGame()">CLOSE [X]</div>
-        <iframe id="game-frame" src=""></iframe>
-    </div>
-
-    <div id="music-container"><div id="player-target"></div></div>
-
-    <div class="content">
-        <h1>Cloudz</h1>
-        <div class="info-container">
-            <div class="discord-tag hover-target">DISCORD: <b>hellothere.33</b></div>
-            <a href="https://cash.app/$roman479" target="_blank" class="cashapp-btn hover-target">CASHAPP</a>
-            
-            <div class="dropdown">
-                <div class="dropdown-toggle hover-target">GAMES</div>
-                <div class="dropdown-content">
-                    <a href="#" class="hover-target" onclick="openGame('dino')">CHROME DINO</a>
-                    <a href="#" class="hover-target" onclick="openGame('snake')">GOOGLE SNAKE</a>
-                </div>
+    <div class="content-wrapper">
+        <h1 class="title hover-target">Cloudz</h1>
+        <div class="btn-style hover-target" id="discord-txt" onclick="copyDiscord()">DISCORD: hellothere.33</div>
+        <a href="https://cash.app/$roman479" target="_blank" class="btn-style cashapp-btn hover-target">CASH APP</a>
+        
+        <div class="dropdown">
+            <button onclick="toggleDropdown()" class="btn-style hover-target">GAMES</button>
+            <div id="gameDrop" class="dropdown-content">
+                <button onclick="startGame('dino')" class="hover-target">DINO</button>
+                <button onclick="startGame('snake')" class="hover-target">SNAKE</button>
+                <button onclick="startGame('zombies')" class="hover-target">ZOMBIES</button>
+                <button onclick="openTTT()" class="hover-target">TIC-TAC-TOE</button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <div id="game-modal">
+        <button onclick="closeGame()" class="hover-target" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.2rem;">[CLOSE]</button>
+        <div id="game-ui" style="text-align:center; margin-bottom:10px; font-weight:bold;">SCORE: 0</div>
+        <canvas id="game-canvas"></canvas>
+        <div id="game-overlay">
+            <h1 id="over-text">GAME OVER</h1>
+            <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:10px;">RETRY</button>
+        </div>
+        <div id="ttt-wrap" style="display:none; text-align:center;">
+             <div id="ttt-grid">
+                <div class="cell hover-target" onclick="makeMove(0)"></div>
+                <div class="cell hover-target" onclick="makeMove(1)"></div>
+                <div class="cell hover-target" onclick="makeMove(2)"></div>
+                <div class="cell hover-target" onclick="makeMove(3)"></div>
+                <div class="cell hover-target" onclick="makeMove(4)"></div>
+                <div class="cell hover-target" onclick="makeMove(5)"></div>
+                <div class="cell hover-target" onclick="makeMove(6)"></div>
+                <div class="cell hover-target" onclick="makeMove(7)"></div>
+                <div class="cell hover-target" onclick="makeMove(8)"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Custom Cursor
-        const cursor = document.getElementById("cursor");
-        window.addEventListener("mousemove", (e) => {
-            cursor.style.left = e.clientX + "px";
-            cursor.style.top = e.clientY + "px";
-        });
+        let isMobile = false;
+        let rot = 0;
+        const cur = document.getElementById('cursor-wrapper');
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let gameActive = false, score = 0, currentType = '', animationId;
+        let keys = {};
 
-        document.querySelectorAll(".hover-target").forEach(el => {
-            el.addEventListener("mouseenter", () => cursor.classList.add("glowing"));
-            el.addEventListener("mouseleave", () => cursor.classList.remove("glowing"));
-        });
-
-        // Game Logic
-        function openGame(game) {
-            const modal = document.getElementById('game-modal');
-            const frame = document.getElementById('game-frame');
-            modal.style.display = 'flex';
-            
-            if(game === 'dino') {
-                frame.src = "https://chromedino.com/";
-            } else if(game === 'snake') {
-                frame.src = "https://www.google.com/logos/2010/pacman10-i.html"; // Lightweight snake alternative that works in iFrames
+        // PREVENT SCROLLING FOR GAME KEYS
+        window.addEventListener("keydown", function(e) {
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault();
             }
+            keys[e.code] = true;
+        }, false);
+        window.addEventListener('keyup', e => keys[e.code] = false);
+
+        function setMobile(e) { e.stopPropagation(); isMobile = true; document.body.classList.add('mobile-mode'); }
+        
+        function enterSite() { 
+            document.getElementById('intro-overlay').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 500);
+            document.getElementById('music-player').innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/Cz2YCRmDOFk?autoplay=1&loop=1&playlist=Cz2YCRmDOFk" frameborder="0" allow="autoplay"></iframe>`;
         }
 
-        function closeGame() {
-            document.getElementById('game-modal').style.display = 'none';
-            document.getElementById('game-frame').src = "";
+        document.addEventListener('mousemove', (e) => {
+            if(!isMobile) {
+                cur.style.left = e.clientX + 'px';
+                cur.style.top = e.clientY + 'px';
+                if (e.target.classList.contains('hover-target')) cur.classList.add('hover-active');
+                else cur.classList.remove('hover-active');
+            }
+        });
+
+        function animateCursor() {
+            rot += 1.5;
+            cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        function toggleInfo(s) { document.getElementById('info-panel').style.display = s ? 'block' : 'none'; }
+        function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
+
+        function copyDiscord() {
+            const el = document.createElement('textarea');
+            el.value = 'hellothere.33';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const box = document.getElementById('discord-txt');
+            box.textContent = "COPIED!";
+            setTimeout(() => box.textContent = "DISCORD: hellothere.33", 1500);
         }
 
-        // Music Logic
-        function enterSite() {
-            const overlay = document.getElementById("overlay");
-            overlay.style.opacity = "0";
-            setTimeout(() => overlay.style.display = "none", 800);
-
-            const musicContainer = document.getElementById("player-target");
-            musicContainer.innerHTML = `
-                <iframe 
-                    src="https://www.youtube.com/embed/Cz2YCRmDOFk?autoplay=1&loop=1&playlist=Cz2YCRmDOFk" 
-                    allow="autoplay">
-                </iframe>`;
+        function restartGame() {
+            document.getElementById('game-overlay').style.display = 'none';
+            startGame(currentType);
         }
 
-        // Particles
+        function gameOver() {
+            gameActive = false;
+            document.getElementById('game-overlay').style.display = 'flex';
+        }
+
+        function startGame(type) {
+            document.getElementById('game-modal').style.display = 'flex';
+            document.getElementById('ttt-wrap').style.display = 'none';
+            document.getElementById('game-overlay').style.display = 'none';
+            canvas.style.display = 'block';
+            canvas.width = 600; canvas.height = 400;
+            currentType = type; gameActive = true; score = 0;
+            if(type === 'dino') initDino();
+            if(type === 'snake') initSnake();
+            if(type === 'zombies') initZombies();
+            gameLoop();
+        }
+
+        function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; }
+
+        function gameLoop() {
+            if(!gameActive) return;
+            ctx.clearRect(0,0,600,400);
+            if(currentType === 'dino') updateDino();
+            if(currentType === 'snake') updateSnake();
+            if(currentType === 'zombies') updateZombies();
+            document.getElementById('game-ui').innerText = "SCORE: " + score;
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        /* --- MINI GAME LOGIC --- */
+        let dPlr, obs;
+        function initDino() { dPlr = {y: 350, v: 0}; obs = []; }
+        function updateDino() {
+            if(keys['Space'] && dPlr.y === 350) dPlr.v = -12;
+            dPlr.v += 0.6; dPlr.y += dPlr.v;
+            if(dPlr.y > 350) { dPlr.y = 350; dPlr.v = 0; }
+            ctx.fillStyle = "#fff"; ctx.fillRect(50, dPlr.y, 30, 30);
+            if(Math.random() < 0.02) obs.push({x: 600, w: 20});
+            obs.forEach((o, i) => {
+                o.x -= 6; ctx.fillStyle = "#0096ff"; ctx.fillRect(o.x, 350, o.w, 30);
+                if(o.x < 80 && o.x > 20 && dPlr.y > 320) gameOver();
+                if(o.x < -20) { obs.splice(i, 1); score++; }
+            });
+        }
+
+        let snk, sDir, food, sTick;
+        function initSnake() { snk = [{x: 10, y: 10}]; sDir = {x: 1, y: 0}; sTick = 0; food = {x: 5, y: 5}; }
+        function updateSnake() {
+            if(keys['ArrowUp'] && sDir.y === 0) sDir = {x:0, y:-1};
+            if(keys['ArrowDown'] && sDir.y === 0) sDir = {x:0, y:1};
+            if(keys['ArrowLeft'] && sDir.x === 0) sDir = {x:-1, y:0};
+            if(keys['ArrowRight'] && sDir.x === 0) sDir = {x:1, y:0};
+            if(++sTick % 10 === 0) {
+                let head = {x: snk[0].x + sDir.x, y: snk[0].y + sDir.y};
+                if(head.x < 0 || head.x >= 30 || head.y >= 20 || head.y < 0) return gameOver();
+                snk.unshift(head);
+                if(head.x === food.x && head.y === food.y) { score++; food = {x: Math.floor(Math.random()*30), y: Math.floor(Math.random()*20)}; }
+                else snk.pop();
+            }
+            ctx.fillStyle = "#0096ff"; snk.forEach(p => ctx.fillRect(p.x*20, p.y*20, 18, 18));
+            ctx.fillStyle = "#fff"; ctx.fillRect(food.x*20, food.y*20, 18, 18);
+        }
+
+        let zP, zmbs, blts;
+        function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
+        canvas.addEventListener('mousedown', (e) => { 
+            if(currentType === 'zombies' && gameActive) {
+                let rect = canvas.getBoundingClientRect();
+                let angle = Math.atan2(e.clientY - (rect.top + zP.y), e.clientX - (rect.left + zP.x));
+                blts.push({x: zP.x, y: zP.y, vx: Math.cos(angle)*7, vy: Math.sin(angle)*7});
+            }
+        });
+        function updateZombies() {
+            if(keys['KeyW']) zP.y -= 3; if(keys['KeyS']) zP.y += 3;
+            if(keys['KeyA']) zP.x -= 3; if(keys['KeyD']) zP.x += 3;
+            ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20);
+            if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400});
+            blts.forEach((b, i) => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); });
+            zmbs.forEach((z, i) => {
+                let a = Math.atan2(zP.y - z.y, zP.x - z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2;
+                ctx.fillStyle = "red"; ctx.fillRect(z.x-10, z.y-10, 20, 20);
+                if(Math.hypot(zP.x-z.x, zP.y-z.y) < 20) gameOver();
+                blts.forEach((b, bi) => { if(Math.hypot(z.x-b.x, z.y-b.y) < 15) { zmbs.splice(i, 1); blts.splice(bi, 1); score += 10; }});
+            });
+        }
+
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 130, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ffffff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.8, "random": true },
-                "size": { "value": 2, "random": true },
-                "line_linked": { "enable": true, "distance": 130, "color": "#ffffff", "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 0.8, "direction": "none", "random": true, "out_mode": "out" }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": { "onhover": { "enable": true, "mode": "grab" } },
-                "modes": { "grab": { "distance": 180, "line_linked": { "opacity": 0.8 } } }
+                "number": { "value": 200 },
+                "size": { "value": 1.5, "random": true },
+                "line_linked": { "enable": true, "distance": 100, "opacity": 0.4 },
+                "move": { "speed": 1 }
             }
         });
     </script>
