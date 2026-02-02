@@ -17,6 +17,7 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden; height: 100vh; width: 100vw;
             display: flex; justify-content: center; align-items: center;
+            text-align: center;
         }
 
         /* SPINNING RETICLE CURSOR */
@@ -53,15 +54,23 @@
 
         .content-wrapper {
             position: relative; z-index: 10;
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 20px; width: 100%;
         }
 
-        h1.title { font-size: clamp(3.5rem, 12vw, 7rem); letter-spacing: clamp(10px, 3vw, 30px); font-weight: 900; text-transform: uppercase; }
+        h1.title { 
+            font-size: clamp(3.5rem, 12vw, 7rem); 
+            letter-spacing: clamp(10px, 3vw, 30px); 
+            font-weight: 900; 
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
 
         .btn-style {
             width: 280px; padding: 15px; border: 1px solid #fff;
             background: rgba(0,0,0,0.7); color: #fff; text-align: center;
             text-decoration: none; letter-spacing: 2px; transition: 0.2s;
+            display: block;
         }
 
         .btn-style:hover { border-color: #0096ff; color: #0096ff; }
@@ -76,6 +85,7 @@
         .dropdown-content button {
             width: 100%; padding: 12px; background: none; border: none;
             color: #fff; font-family: inherit; border-bottom: 1px solid #222;
+            cursor: none !important;
         }
         .dropdown-content button:hover { background: #fff; color: #000; }
 
@@ -85,15 +95,18 @@
             background: rgba(0,0,0,0.98); z-index: 5000;
             flex-direction: column; align-items: center; justify-content: center;
         }
-        #game-canvas { background: #000; border: 1px solid #333; }
+        #game-canvas { background: #000; border: 1px solid #333; margin: 0 auto; }
         #game-overlay { 
             position: absolute; display: none; flex-direction: column; 
-            align-items: center; background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 5001;
         }
 
         /* TIC TAC TOE */
-        #ttt-wrap { display: none; flex-direction: column; align-items: center; }
-        #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin-top: 20px; }
+        #ttt-wrap { display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin: 20px 0; }
         .cell { 
             width: 100px; height: 100px; border: 1px solid #fff; 
             display: flex; align-items: center; justify-content: center; 
@@ -156,29 +169,32 @@
 
     <div id="game-modal">
         <button onclick="closeGame()" class="hover-target" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.2rem;">[CLOSE]</button>
-        <div id="game-ui" style="text-align:center; margin-bottom:10px; font-weight:bold;">SCORE: 0</div>
         
-        <canvas id="game-canvas"></canvas>
+        <div id="game-container" style="position:relative; display:flex; flex-direction:column; align-items:center;">
+            <div id="game-ui" style="text-align:center; margin-bottom:10px; font-weight:bold; font-size: 1.2rem;">SCORE: 0</div>
+            
+            <canvas id="game-canvas"></canvas>
 
-        <div id="ttt-wrap">
-            <h2 id="ttt-status">YOU (X) VS BOT (O)</h2>
-            <div id="ttt-grid">
-                <div class="cell hover-target" onclick="makeMove(0)"></div>
-                <div class="cell hover-target" onclick="makeMove(1)"></div>
-                <div class="cell hover-target" onclick="makeMove(2)"></div>
-                <div class="cell hover-target" onclick="makeMove(3)"></div>
-                <div class="cell hover-target" onclick="makeMove(4)"></div>
-                <div class="cell hover-target" onclick="makeMove(5)"></div>
-                <div class="cell hover-target" onclick="makeMove(6)"></div>
-                <div class="cell hover-target" onclick="makeMove(7)"></div>
-                <div class="cell hover-target" onclick="makeMove(8)"></div>
+            <div id="ttt-wrap">
+                <h2 id="ttt-status">YOU (X) VS BOT (O)</h2>
+                <div id="ttt-grid">
+                    <div class="cell hover-target" onclick="makeMove(0)"></div>
+                    <div class="cell hover-target" onclick="makeMove(1)"></div>
+                    <div class="cell hover-target" onclick="makeMove(2)"></div>
+                    <div class="cell hover-target" onclick="makeMove(3)"></div>
+                    <div class="cell hover-target" onclick="makeMove(4)"></div>
+                    <div class="cell hover-target" onclick="makeMove(5)"></div>
+                    <div class="cell hover-target" onclick="makeMove(6)"></div>
+                    <div class="cell hover-target" onclick="makeMove(7)"></div>
+                    <div class="cell hover-target" onclick="makeMove(8)"></div>
+                </div>
+                <button class="btn-style hover-target" onclick="resetTTT()">RESET BOARD</button>
             </div>
-            <button class="btn-style hover-target" onclick="resetTTT()" style="margin-top:20px;">RESET BOARD</button>
-        </div>
 
-        <div id="game-overlay">
-            <h1 id="over-text">GAME OVER</h1>
-            <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:10px;">RETRY</button>
+            <div id="game-overlay">
+                <h1 id="over-text">GAME OVER</h1>
+                <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:15px;">RETRY</button>
+            </div>
         </div>
     </div>
 
@@ -191,7 +207,6 @@
         let gameActive = false, score = 0, currentType = '', animationId;
         let keys = {};
 
-        // SCROLL LOCK & KEY TRACKING
         window.addEventListener("keydown", e => {
             if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
             keys[e.code] = true;
@@ -215,14 +230,12 @@
             }
         });
 
-        // CONSTANT ROTATION
         function animateCursor() { rot += 2; cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`; requestAnimationFrame(animateCursor); }
         animateCursor();
 
         function toggleInfo(s) { document.getElementById('info-panel').style.display = s ? 'block' : 'none'; }
         function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
 
-        // DISCORD COPY SYSTEM
         function copyDiscord() {
             const tag = "hellothere.33";
             const el = document.createElement('textarea');
@@ -231,19 +244,19 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-
             const box = document.getElementById('discord-txt');
             box.textContent = "COPIED!";
             box.style.color = "#0096ff";
             setTimeout(() => { box.textContent = "DISCORD: " + tag; box.style.color = "#fff"; }, 1500);
         }
 
-        // TIC TAC TOE LOGIC
+        // TTT LOGIC
         let tttBoard = ["","","","","","","","",""], tttLive = true;
         function openTTT() {
             document.getElementById('game-modal').style.display = 'flex';
             document.getElementById('ttt-wrap').style.display = 'flex';
             document.getElementById('game-ui').style.display = 'none';
+            document.getElementById('game-overlay').style.display = 'none';
             canvas.style.display = 'none';
             resetTTT();
         }
@@ -256,19 +269,16 @@
         function botTTT() {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             let move = -1;
-            // Bot Win Check
             for(let w of wins) {
                 let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
                 if(c.filter(v=>v==="O").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
             }
-            // Block Player Check
             if(move === -1) {
                 for(let w of wins) {
                     let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
                     if(c.filter(v=>v==="X").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
                 }
             }
-            // Random Fallback
             if(move === -1) {
                 let a = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
                 move = a[Math.floor(Math.random()*a.length)];
@@ -314,7 +324,6 @@
             animationId = requestAnimationFrame(gameLoop);
         }
 
-        // DINO LOGIC
         let dPlr, dObs;
         function initDino() { dPlr = {y:350, v:0}; dObs = []; }
         function updateDino() {
@@ -330,7 +339,6 @@
             });
         }
 
-        // SNAKE LOGIC
         let snk, sDir, sFood, sTick;
         function initSnake() { snk = [{x:10, y:10}]; sDir = {x:1, y:0}; sTick = 0; sFood = {x:5, y:5}; }
         function updateSnake() {
@@ -349,7 +357,6 @@
             ctx.fillStyle = "#fff"; ctx.fillRect(sFood.x*20, sFood.y*20, 18, 18);
         }
 
-        // ZOMBIE LOGIC
         let zP, zmbs, blts;
         function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
         canvas.addEventListener('mousedown', e => { 
@@ -374,12 +381,7 @@
         }
 
         particlesJS("particles-js", {
-            "particles": { 
-                "number": { "value": 250 }, 
-                "size": { "value": 1.5, "random": true }, 
-                "line_linked": { "enable": true, "distance": 80, "opacity": 0.4 }, 
-                "move": { "speed": 1 } 
-            }
+            "particles": { "number": { "value": 250 }, "size": { "value": 1.5, "random": true }, "line_linked": { "enable": true, "distance": 80, "opacity": 0.4 }, "move": { "speed": 1 } }
         });
     </script>
 </body>
