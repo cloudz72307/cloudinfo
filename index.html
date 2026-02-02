@@ -36,13 +36,13 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
 
         #cursor-dot {
-            width: 5px; height: 5px; background: #fff; border-radius: 50%;
+            width: 6px; height: 6px; background: #fff; border-radius: 50%;
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
 
         .hover-active .reticle-part { width: 25px; height: 25px; border-color: #0096ff; }
 
-        /* UI */
+        /* UI ELEMENTS */
         #particles-js { position: absolute; inset: 0; z-index: 1; }
 
         #info-panel {
@@ -77,6 +77,7 @@
             width: 100%; padding: 12px; background: none; border: none;
             color: #fff; font-family: inherit; border-bottom: 1px solid #222;
         }
+        .dropdown-content button:hover { background: #fff; color: #000; }
 
         /* GAME MODAL */
         #game-modal {
@@ -90,7 +91,7 @@
             align-items: center; background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
         }
 
-        /* TTT */
+        /* TIC TAC TOE */
         #ttt-wrap { display: none; flex-direction: column; align-items: center; }
         #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin-top: 20px; }
         .cell { 
@@ -172,7 +173,7 @@
                 <div class="cell hover-target" onclick="makeMove(7)"></div>
                 <div class="cell hover-target" onclick="makeMove(8)"></div>
             </div>
-            <button class="btn-style hover-target" onclick="resetTTT()" style="margin-top:20px;">RESET</button>
+            <button class="btn-style hover-target" onclick="resetTTT()" style="margin-top:20px;">RESET BOARD</button>
         </div>
 
         <div id="game-overlay">
@@ -190,7 +191,7 @@
         let gameActive = false, score = 0, currentType = '', animationId;
         let keys = {};
 
-        // SCROLL LOCK
+        // SCROLL LOCK & KEY TRACKING
         window.addEventListener("keydown", e => {
             if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
             keys[e.code] = true;
@@ -214,21 +215,30 @@
             }
         });
 
-        function animateCursor() { rot += 1.5; cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`; requestAnimationFrame(animateCursor); }
+        // CONSTANT ROTATION
+        function animateCursor() { rot += 2; cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`; requestAnimationFrame(animateCursor); }
         animateCursor();
 
         function toggleInfo(s) { document.getElementById('info-panel').style.display = s ? 'block' : 'none'; }
         function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
 
+        // DISCORD COPY SYSTEM
         function copyDiscord() {
-            navigator.clipboard.writeText("hellothere.33").then(() => {
-                const box = document.getElementById('discord-txt');
-                box.textContent = "COPIED!";
-                setTimeout(() => box.textContent = "DISCORD: hellothere.33", 1500);
-            });
+            const tag = "hellothere.33";
+            const el = document.createElement('textarea');
+            el.value = tag;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const box = document.getElementById('discord-txt');
+            box.textContent = "COPIED!";
+            box.style.color = "#0096ff";
+            setTimeout(() => { box.textContent = "DISCORD: " + tag; box.style.color = "#fff"; }, 1500);
         }
 
-        // TTT LOGIC
+        // TIC TAC TOE LOGIC
         let tttBoard = ["","","","","","","","",""], tttLive = true;
         function openTTT() {
             document.getElementById('game-modal').style.display = 'flex';
@@ -246,17 +256,20 @@
         function botTTT() {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             let move = -1;
-            for(let w of wins) { // Win logic
+            // Bot Win Check
+            for(let w of wins) {
                 let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
                 if(c.filter(v=>v==="O").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
             }
-            if(move === -1) { // Block logic
+            // Block Player Check
+            if(move === -1) {
                 for(let w of wins) {
                     let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
                     if(c.filter(v=>v==="X").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
                 }
             }
-            if(move === -1) { // Random
+            // Random Fallback
+            if(move === -1) {
                 let a = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
                 move = a[Math.floor(Math.random()*a.length)];
             }
@@ -284,4 +297,90 @@
             currentType = type; gameActive = true; score = 0;
             if(type === 'dino') initDino();
             if(type === 'snake') initSnake();
-            if(type
+            if(type === 'zombies') initZombies();
+            gameLoop();
+        }
+        function restartGame() { document.getElementById('game-overlay').style.display = 'none'; startGame(currentType); }
+        function gameOver() { gameActive = false; document.getElementById('game-overlay').style.display = 'flex'; }
+        function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; cancelAnimationFrame(animationId); }
+        
+        function gameLoop() {
+            if(!gameActive) return;
+            ctx.clearRect(0,0,600,400);
+            if(currentType === 'dino') updateDino();
+            if(currentType === 'snake') updateSnake();
+            if(currentType === 'zombies') updateZombies();
+            document.getElementById('game-ui').innerText = "SCORE: " + score;
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        // DINO LOGIC
+        let dPlr, dObs;
+        function initDino() { dPlr = {y:350, v:0}; dObs = []; }
+        function updateDino() {
+            if(keys['Space'] && dPlr.y === 350) dPlr.v = -12;
+            dPlr.v += 0.6; dPlr.y += dPlr.v;
+            if(dPlr.y > 350) { dPlr.y = 350; dPlr.v = 0; }
+            ctx.fillStyle = "#fff"; ctx.fillRect(50, dPlr.y, 30, 30);
+            if(Math.random() < 0.02) dObs.push({x: 600, w: 20});
+            dObs.forEach((o, i) => {
+                o.x -= 6; ctx.fillStyle = "#0096ff"; ctx.fillRect(o.x, 350, o.w, 30);
+                if(o.x < 80 && o.x > 20 && dPlr.y > 320) gameOver();
+                if(o.x < -20) { dObs.splice(i, 1); score++; }
+            });
+        }
+
+        // SNAKE LOGIC
+        let snk, sDir, sFood, sTick;
+        function initSnake() { snk = [{x:10, y:10}]; sDir = {x:1, y:0}; sTick = 0; sFood = {x:5, y:5}; }
+        function updateSnake() {
+            if(keys['ArrowUp'] && sDir.y === 0) sDir = {x:0, y:-1};
+            if(keys['ArrowDown'] && sDir.y === 0) sDir = {x:0, y:1};
+            if(keys['ArrowLeft'] && sDir.x === 0) sDir = {x:-1, y:0};
+            if(keys['ArrowRight'] && sDir.x === 0) sDir = {x:1, y:0};
+            if(++sTick % 10 === 0) {
+                let h = {x: snk[0].x + sDir.x, y: snk[0].y + sDir.y};
+                if(h.x < 0 || h.x >= 30 || h.y >= 20 || h.y < 0) return gameOver();
+                snk.unshift(h);
+                if(h.x === sFood.x && h.y === sFood.y) { score++; sFood = {x: Math.floor(Math.random()*30), y: Math.floor(Math.random()*20)}; }
+                else snk.pop();
+            }
+            ctx.fillStyle = "#0096ff"; snk.forEach(p => ctx.fillRect(p.x*20, p.y*20, 18, 18));
+            ctx.fillStyle = "#fff"; ctx.fillRect(sFood.x*20, sFood.y*20, 18, 18);
+        }
+
+        // ZOMBIE LOGIC
+        let zP, zmbs, blts;
+        function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
+        canvas.addEventListener('mousedown', e => { 
+            if(currentType === 'zombies' && gameActive) {
+                let r = canvas.getBoundingClientRect();
+                let a = Math.atan2(e.clientY - (r.top + zP.y), e.clientX - (r.left + zP.x));
+                blts.push({x: zP.x, y: zP.y, vx: Math.cos(a)*7, vy: Math.sin(a)*7});
+            }
+        });
+        function updateZombies() {
+            if(keys['KeyW']) zP.y -= 3; if(keys['KeyS']) zP.y += 3;
+            if(keys['KeyA']) zP.x -= 3; if(keys['KeyD']) zP.x += 3;
+            ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20);
+            if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400});
+            blts.forEach(b => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); });
+            zmbs.forEach((z, i) => {
+                let a = Math.atan2(zP.y - z.y, zP.x - z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2;
+                ctx.fillStyle = "red"; ctx.fillRect(z.x-10, z.y-10, 20, 20);
+                if(Math.hypot(zP.x-z.x, zP.y-z.y) < 20) gameOver();
+                blts.forEach((b, bi) => { if(Math.hypot(z.x-b.x, z.y-b.y) < 15) { zmbs.splice(i, 1); blts.splice(bi, 1); score += 10; }});
+            });
+        }
+
+        particlesJS("particles-js", {
+            "particles": { 
+                "number": { "value": 250 }, 
+                "size": { "value": 1.5, "random": true }, 
+                "line_linked": { "enable": true, "distance": 80, "opacity": 0.4 }, 
+                "move": { "speed": 1 } 
+            }
+        });
+    </script>
+</body>
+</html>
