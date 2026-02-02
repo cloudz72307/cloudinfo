@@ -10,7 +10,6 @@
             margin: 0; padding: 0; box-sizing: border-box;
             user-select: none; cursor: none !important;
             -webkit-tap-highlight-color: transparent;
-            touch-action: none;
         }
 
         body {
@@ -67,17 +66,12 @@
 
         .btn-style:hover { border-color: #0096ff; color: #0096ff; }
 
-        /* MOBILE CONTROLS */
-        #mobile-controls {
-            display: none; position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%); z-index: 6000; gap: 10px;
-        }
-
-        .ctrl-btn {
-            width: 60px; height: 60px; border: 1px solid #fff;
-            background: rgba(255,255,255,0.1); color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; border-radius: 50%;
+        /* ERROR UI */
+        #mobile-error {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 320px;
+            background: #000; border: 2px solid red; padding: 25px; z-index: 9999;
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
         }
 
         /* GAME MODAL */
@@ -86,14 +80,7 @@
             background: rgba(0,0,0,0.98); z-index: 5000;
             flex-direction: column; align-items: center; justify-content: center;
         }
-        #game-canvas { background: #000; border: 1px solid #333; max-width: 95vw; max-height: 50vh; }
-
-        #game-overlay { 
-            position: absolute; display: none; flex-direction: column; 
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
-            top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5001;
-        }
+        #game-canvas { background: #000; border: 1px solid #333; }
 
         /* DROPDOWN */
         .dropdown { position: relative; width: 280px; }
@@ -108,8 +95,8 @@
 
         /* TIC TAC TOE */
         #ttt-wrap { display: none; flex-direction: column; align-items: center; }
-        #ttt-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 10px; margin: 20px 0; }
-        .cell { width: 80px; height: 80px; border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin: 20px 0; }
+        .cell { width: 100px; height: 100px; border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
 
         #intro-overlay {
             position: fixed; inset: 0; background: #000; z-index: 9000;
@@ -118,12 +105,17 @@
 
         body.mobile-mode #cursor-wrapper { display: none; }
         body.mobile-mode * { cursor: auto !important; }
-        body.mobile-mode #mobile-controls { display: flex; }
     </style>
 </head>
 <body>
 
     <div id="music-player" style="display:none;"></div>
+
+    <div id="mobile-error">
+        <h3 style="color:red; margin-bottom:15px;">ACCESS DENIED</h3>
+        <p style="font-size:0.9rem; line-height:1.4;">WARNING: ALL OTHER GAMES BESIDES TIC TAC TOE ARE LIMITED TO PC ONLY, IM TRYING TO FIX IT</p>
+        <button class="btn-style" style="width:100%; margin-top:20px; padding:10px;" onclick="closeError()">OK</button>
+    </div>
 
     <div id="cursor-wrapper">
         <div id="reticle-top-left" class="reticle-part"></div>
@@ -148,9 +140,9 @@
         <div class="dropdown">
             <button onclick="toggleDropdown()" class="btn-style hover-target">GAMES</button>
             <div id="gameDrop" class="dropdown-content">
-                <button onclick="startGame('dino')">DINO</button>
-                <button onclick="startGame('snake')">SNAKE</button>
-                <button onclick="startGame('zombies')">ZOMBIES</button>
+                <button onclick="checkMobileGame('dino')">DINO</button>
+                <button onclick="checkMobileGame('snake')">SNAKE</button>
+                <button onclick="checkMobileGame('zombies')">ZOMBIES</button>
                 <button onclick="openTTT()">TIC-TAC-TOE</button>
             </div>
         </div>
@@ -175,29 +167,12 @@
                 <div class="cell" onclick="makeMove(7)"></div>
                 <div class="cell" onclick="makeMove(8)"></div>
             </div>
-            <button class="btn-style" onclick="resetTTT()">RESET</button>
-        </div>
-
-        <div id="game-overlay">
-            <h1>GAME OVER</h1>
-            <button class="btn-style" onclick="restartGame()" style="margin-top:15px;">RETRY</button>
-        </div>
-
-        <div id="mobile-controls">
-            <div style="display:flex; flex-direction:column; align-items:center;">
-                <button class="ctrl-btn" ontouchstart="handleTouch('ArrowUp')" ontouchend="handleTouchEnd('ArrowUp')">↑</button>
-                <div style="display:flex; gap:10px;">
-                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowLeft')" ontouchend="handleTouchEnd('ArrowLeft')">←</button>
-                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowDown')" ontouchend="handleTouchEnd('ArrowDown')">↓</button>
-                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowRight')" ontouchend="handleTouchEnd('ArrowRight')">→</button>
-                </div>
-            </div>
-            <button class="ctrl-btn" style="width:80px; border-radius:10px;" ontouchstart="handleTouch('Space')" ontouchend="handleTouchEnd('Space')">ACTION</button>
+            <button class="btn-style" style="margin: 0 auto;" onclick="resetTTT()">RESET</button>
         </div>
     </div>
 
     <script>
-        let isMobile = false;
+        let isMobileMode = false;
         let rot = 0;
         const cur = document.getElementById('cursor-wrapper');
         const canvas = document.getElementById('game-canvas');
@@ -207,10 +182,20 @@
 
         function setMobile(e) { 
             e.stopPropagation(); 
-            isMobile = !isMobile; 
-            document.body.classList.toggle('mobile-mode', isMobile);
-            e.target.innerText = isMobile ? "MOBILE MODE: ON" : "MOBILE MODE: OFF";
+            isMobileMode = !isMobileMode; 
+            document.body.classList.toggle('mobile-mode', isMobileMode);
+            e.target.innerText = isMobileMode ? "MOBILE MODE: ON" : "MOBILE MODE: OFF";
         }
+
+        function checkMobileGame(game) {
+            if(isMobileMode) {
+                document.getElementById('mobile-error').style.display = 'block';
+            } else {
+                startGame(game);
+            }
+        }
+
+        function closeError() { document.getElementById('mobile-error').style.display = 'none'; }
         
         function enterSite() { 
             document.getElementById('intro-overlay').style.opacity = '0'; 
@@ -218,23 +203,15 @@
             document.getElementById('music-player').innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/Cz2YCRmDOFk?autoplay=1&loop=1&playlist=Cz2YCRmDOFk" frameborder="0" allow="autoplay"></iframe>`;
         }
 
-        // MOBILE INPUT ADAPTER
-        function handleTouch(key) { keys[key] = true; if(currentType==='dino') keys['Space']=true; }
-        function handleTouchEnd(key) { keys[key] = false; if(currentType==='dino') keys['Space']=false; }
-        canvas.addEventListener('touchstart', e => {
-            if(currentType === 'zombies') {
-                const r = canvas.getBoundingClientRect();
-                const t = e.touches[0];
-                const a = Math.atan2(t.clientY - (r.top + zP.y), t.clientX - (r.left + zP.x));
-                blts.push({x: zP.x, y: zP.y, vx: Math.cos(a)*7, vy: Math.sin(a)*7});
-            }
+        // SCROLL LOCK
+        window.addEventListener("keydown", e => {
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
+            keys[e.code] = true;
         });
-
-        window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); keys[e.code] = true; });
         window.addEventListener('keyup', e => keys[e.code] = false);
 
         document.addEventListener('mousemove', e => {
-            if(!isMobile) {
+            if(!isMobileMode) {
                 cur.style.left = e.clientX + 'px';
                 cur.style.top = e.clientY + 'px';
                 if (e.target.classList.contains('hover-target')) cur.classList.add('hover-active');
@@ -247,11 +224,15 @@
 
         function copyDiscord() {
             const tag = "hellothere.33";
-            navigator.clipboard.writeText(tag).then(() => {
-                const box = document.getElementById('discord-txt');
-                box.textContent = "COPIED!";
-                setTimeout(() => box.textContent = "DISCORD: " + tag, 1500);
-            });
+            const el = document.createElement('textarea');
+            el.value = tag;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const box = document.getElementById('discord-txt');
+            box.textContent = "COPIED!";
+            setTimeout(() => box.textContent = "DISCORD: " + tag, 1500);
         }
 
         function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
@@ -278,13 +259,12 @@
             }
             return false;
         }
-        function resetTTT() { tttBoard = ["","","","","","","","",""]; tttLive = true; updateTTT(); }
+        function resetTTT() { tttBoard = ["","","","","","","","",""]; tttLive = true; document.getElementById('ttt-status').innerText = "YOU (X) VS BOT (O)"; updateTTT(); }
 
-        // GAMES
+        // PC GAMES
         function startGame(type) {
             document.getElementById('game-modal').style.display = 'flex';
             document.getElementById('ttt-wrap').style.display = 'none';
-            document.getElementById('game-overlay').style.display = 'none';
             document.getElementById('game-ui').style.display = 'block';
             canvas.style.display = 'block';
             canvas.width = 600; canvas.height = 400;
@@ -294,9 +274,7 @@
             if(type === 'zombies') initZombies();
             gameLoop();
         }
-        function restartGame() { startGame(currentType); }
-        function gameOver() { gameActive = false; document.getElementById('game-overlay').style.display = 'flex'; }
-        function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; cancelAnimationFrame(animationId); }
+        function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; }
         
         function gameLoop() {
             if(!gameActive) return;
@@ -308,54 +286,16 @@
             animationId = requestAnimationFrame(gameLoop);
         }
 
-        let dPlr, dObs;
-        function initDino() { dPlr = {y:350, v:0}; dObs = []; }
-        function updateDino() {
-            if(keys['Space'] && dPlr.y === 350) dPlr.v = -12;
-            dPlr.v += 0.6; dPlr.y += dPlr.v;
-            if(dPlr.y > 350) { dPlr.y = 350; dPlr.v = 0; }
-            ctx.fillStyle = "#fff"; ctx.fillRect(50, dPlr.y, 30, 30);
-            if(Math.random() < 0.02) dObs.push({x: 600, w: 20});
-            dObs.forEach((o, i) => {
-                o.x -= 6; ctx.fillStyle = "#0096ff"; ctx.fillRect(o.x, 350, o.w, 30);
-                if(o.x < 80 && o.x > 20 && dPlr.y > 320) gameOver();
-                if(o.x < -20) { dObs.splice(i, 1); score++; }
-            });
-        }
+        // (Game logic functions initDino, updateDino, etc. are the same as previous)
+        let dPlr, dObs; function initDino() { dPlr = {y:350, v:0}; dObs = []; }
+        function updateDino() { if(keys['Space'] && dPlr.y === 350) dPlr.v = -12; dPlr.v += 0.6; dPlr.y += dPlr.v; if(dPlr.y > 350) { dPlr.y = 350; dPlr.v = 0; } ctx.fillStyle = "#fff"; ctx.fillRect(50, dPlr.y, 30, 30); if(Math.random() < 0.02) dObs.push({x: 600, w: 20}); dObs.forEach((o, i) => { o.x -= 6; ctx.fillStyle = "#0096ff"; ctx.fillRect(o.x, 350, o.w, 30); if(o.x < 80 && o.x > 20 && dPlr.y > 320) gameActive=false; if(o.x < -20) { dObs.splice(i, 1); score++; } }); }
+        
+        let snk, sDir, sFood, sTick; function initSnake() { snk = [{x:10, y:10}]; sDir = {x:1, y:0}; sTick = 0; sFood = {x:5, y:5}; }
+        function updateSnake() { if(keys['ArrowUp'] && sDir.y === 0) sDir = {x:0, y:-1}; if(keys['ArrowDown'] && sDir.y === 0) sDir = {x:0, y:1}; if(keys['ArrowLeft'] && sDir.x === 0) sDir = {x:-1, y:0}; if(keys['ArrowRight'] && sDir.x === 0) sDir = {x:1, y:0}; if(++sTick % 10 === 0) { let h = {x: snk[0].x + sDir.x, y: snk[0].y + sDir.y}; if(h.x < 0 || h.x >= 30 || h.y >= 20 || h.y < 0) return gameActive=false; snk.unshift(h); if(h.x === sFood.x && h.y === sFood.y) { score++; sFood = {x: Math.floor(Math.random()*30), y: Math.floor(Math.random()*20)}; } else snk.pop(); } ctx.fillStyle = "#0096ff"; snk.forEach(p => ctx.fillRect(p.x*20, p.y*20, 18, 18)); ctx.fillStyle = "#fff"; ctx.fillRect(sFood.x*20, sFood.y*20, 18, 18); }
 
-        let snk, sDir, sFood, sTick;
-        function initSnake() { snk = [{x:10, y:10}]; sDir = {x:1, y:0}; sTick = 0; sFood = {x:5, y:5}; }
-        function updateSnake() {
-            if(keys['ArrowUp'] && sDir.y === 0) sDir = {x:0, y:-1};
-            if(keys['ArrowDown'] && sDir.y === 0) sDir = {x:0, y:1};
-            if(keys['ArrowLeft'] && sDir.x === 0) sDir = {x:-1, y:0};
-            if(keys['ArrowRight'] && sDir.x === 0) sDir = {x:1, y:0};
-            if(++sTick % 10 === 0) {
-                let h = {x: snk[0].x + sDir.x, y: snk[0].y + sDir.y};
-                if(h.x < 0 || h.x >= 30 || h.y >= 20 || h.y < 0) return gameOver();
-                snk.unshift(h);
-                if(h.x === sFood.x && h.y === sFood.y) { score++; sFood = {x: Math.floor(Math.random()*30), y: Math.floor(Math.random()*20)}; }
-                else snk.pop();
-            }
-            ctx.fillStyle = "#0096ff"; snk.forEach(p => ctx.fillRect(p.x*20, p.y*20, 18, 18));
-            ctx.fillStyle = "#fff"; ctx.fillRect(sFood.x*20, sFood.y*20, 18, 18);
-        }
-
-        let zP, zmbs, blts;
-        function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
-        function updateZombies() {
-            if(keys['ArrowUp']) zP.y -= 4; if(keys['ArrowDown']) zP.y += 4;
-            if(keys['ArrowLeft']) zP.x -= 4; if(keys['ArrowRight']) zP.x += 4;
-            ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20);
-            if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400});
-            blts.forEach(b => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); });
-            zmbs.forEach((z, i) => {
-                let a = Math.atan2(zP.y - z.y, zP.x - z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2;
-                ctx.fillStyle = "red"; ctx.fillRect(z.x-10, z.y-10, 20, 20);
-                if(Math.hypot(zP.x-z.x, zP.y-z.y) < 20) gameOver();
-                blts.forEach((b, bi) => { if(Math.hypot(z.x-b.x, z.y-b.y) < 15) { zmbs.splice(i, 1); blts.splice(bi, 1); score += 10; }});
-            });
-        }
+        let zP, zmbs, blts; function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
+        canvas.addEventListener('mousedown', e => { if(currentType === 'zombies' && gameActive) { let r = canvas.getBoundingClientRect(); let a = Math.atan2(e.clientY - (r.top + zP.y), e.clientX - (r.left + zP.x)); blts.push({x: zP.x, y: zP.y, vx: Math.cos(a)*7, vy: Math.sin(a)*7}); } });
+        function updateZombies() { if(keys['KeyW']) zP.y -= 4; if(keys['KeyS']) zP.y += 4; if(keys['KeyA']) zP.x -= 4; if(keys['KeyD']) zP.x += 4; ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20); if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400}); blts.forEach(b => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); }); zmbs.forEach((z, i) => { let a = Math.atan2(zP.y - z.y, zP.x - z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2; ctx.fillStyle = "red"; ctx.fillRect(z.x-10, z.y-10, 20, 20); if(Math.hypot(zP.x-z.x, zP.y-z.y) < 20) gameActive=false; blts.forEach((b, bi) => { if(Math.hypot(z.x-b.x, z.y-b.y) < 15) { zmbs.splice(i, 1); blts.splice(bi, 1); score += 10; }}); }); }
 
         particlesJS("particles-js", { "particles": { "number": { "value": 150 }, "size": { "value": 1.5 }, "line_linked": { "enable": true, "opacity": 0.4 }, "move": { "speed": 1 } } });
     </script>
