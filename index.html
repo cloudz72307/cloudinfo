@@ -7,41 +7,27 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            cursor: none !important;
+            margin: 0; padding: 0; box-sizing: border-box;
+            user-select: none; cursor: none !important;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: #000; color: #fff;
             font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden; height: 100vh; width: 100vw;
+            display: flex; justify-content: center; align-items: center;
         }
 
         /* SPINNING RETICLE CURSOR */
         #cursor-wrapper {
-            position: fixed;
-            pointer-events: none;
-            z-index: 10000;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
+            position: fixed; pointer-events: none; z-index: 10000;
+            mix-blend-mode: difference; transform: translate(-50%, -50%);
         }
 
         .reticle-part {
-            position: absolute;
-            border: 2px solid #fff;
-            width: 15px;
-            height: 15px;
-            transition: width 0.2s, border-color 0.2s;
+            position: absolute; border: 2px solid #fff;
+            width: 15px; height: 15px; transition: width 0.2s, border-color 0.2s;
         }
 
         #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
@@ -56,7 +42,7 @@
 
         .hover-active .reticle-part { width: 25px; height: 25px; border-color: #0096ff; }
 
-        /* UI ELEMENTS */
+        /* UI */
         #particles-js { position: absolute; inset: 0; z-index: 1; }
 
         #info-panel {
@@ -101,7 +87,16 @@
         #game-canvas { background: #000; border: 1px solid #333; }
         #game-overlay { 
             position: absolute; display: none; flex-direction: column; 
-            align-items: center; background: rgba(0,0,0,0.8); padding: 20px; border: 1px solid #fff;
+            align-items: center; background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
+        }
+
+        /* TTT */
+        #ttt-wrap { display: none; flex-direction: column; align-items: center; }
+        #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin-top: 20px; }
+        .cell { 
+            width: 100px; height: 100px; border: 1px solid #fff; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 2.5rem; font-weight: bold;
         }
 
         #intro-overlay {
@@ -122,7 +117,7 @@
     <div id="info-panel">
         <button class="hover-target" style="float:right; background:none; border:none; color:white; font-size:1.2rem;" onclick="toggleInfo(false)">[X]</button>
         <p>Hi, I'm Cloudz. Pretty sure you figured that out already from the giant "CLOUDZ" text on the mainpage.</p>
-        <p>I do a lot of coding, especially with Python. I'm currently trying to learn every major language I want how to know to make whatever I want.</p>
+        <p>I do a lot of coding, especially with Python. I'm currently trying to learn every major language I need to know to make whatever I want.</p>
         <p>See that Cash App button? If you want to support me, you can donate there or use it for business (yes you have to pay which is negotiable). If you want to talk business for an app or a website, DM me on discord.</p>
         <p style="font-size:0.8rem; opacity:0.5;">Anyway, you can close this now.</p>
     </div>
@@ -161,13 +156,12 @@
     <div id="game-modal">
         <button onclick="closeGame()" class="hover-target" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.2rem;">[CLOSE]</button>
         <div id="game-ui" style="text-align:center; margin-bottom:10px; font-weight:bold;">SCORE: 0</div>
+        
         <canvas id="game-canvas"></canvas>
-        <div id="game-overlay">
-            <h1 id="over-text">GAME OVER</h1>
-            <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:10px;">RETRY</button>
-        </div>
-        <div id="ttt-wrap" style="display:none; text-align:center;">
-             <div id="ttt-grid">
+
+        <div id="ttt-wrap">
+            <h2 id="ttt-status">YOU (X) VS BOT (O)</h2>
+            <div id="ttt-grid">
                 <div class="cell hover-target" onclick="makeMove(0)"></div>
                 <div class="cell hover-target" onclick="makeMove(1)"></div>
                 <div class="cell hover-target" onclick="makeMove(2)"></div>
@@ -178,6 +172,12 @@
                 <div class="cell hover-target" onclick="makeMove(7)"></div>
                 <div class="cell hover-target" onclick="makeMove(8)"></div>
             </div>
+            <button class="btn-style hover-target" onclick="resetTTT()" style="margin-top:20px;">RESET</button>
+        </div>
+
+        <div id="game-overlay">
+            <h1 id="over-text">GAME OVER</h1>
+            <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:10px;">RETRY</button>
         </div>
     </div>
 
@@ -190,13 +190,11 @@
         let gameActive = false, score = 0, currentType = '', animationId;
         let keys = {};
 
-        // PREVENT SCROLLING FOR GAME KEYS
-        window.addEventListener("keydown", function(e) {
-            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-                e.preventDefault();
-            }
+        // SCROLL LOCK
+        window.addEventListener("keydown", e => {
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
             keys[e.code] = true;
-        }, false);
+        });
         window.addEventListener('keyup', e => keys[e.code] = false);
 
         function setMobile(e) { e.stopPropagation(); isMobile = true; document.body.classList.add('mobile-mode'); }
@@ -207,7 +205,7 @@
             document.getElementById('music-player').innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/Cz2YCRmDOFk?autoplay=1&loop=1&playlist=Cz2YCRmDOFk" frameborder="0" allow="autoplay"></iframe>`;
         }
 
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', e => {
             if(!isMobile) {
                 cur.style.left = e.clientX + 'px';
                 cur.style.top = e.clientY + 'px';
@@ -216,128 +214,74 @@
             }
         });
 
-        function animateCursor() {
-            rot += 1.5;
-            cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
-            requestAnimationFrame(animateCursor);
-        }
+        function animateCursor() { rot += 1.5; cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`; requestAnimationFrame(animateCursor); }
         animateCursor();
 
         function toggleInfo(s) { document.getElementById('info-panel').style.display = s ? 'block' : 'none'; }
         function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
 
         function copyDiscord() {
-            const el = document.createElement('textarea');
-            el.value = 'hellothere.33';
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            const box = document.getElementById('discord-txt');
-            box.textContent = "COPIED!";
-            setTimeout(() => box.textContent = "DISCORD: hellothere.33", 1500);
+            navigator.clipboard.writeText("hellothere.33").then(() => {
+                const box = document.getElementById('discord-txt');
+                box.textContent = "COPIED!";
+                setTimeout(() => box.textContent = "DISCORD: hellothere.33", 1500);
+            });
         }
 
-        function restartGame() {
-            document.getElementById('game-overlay').style.display = 'none';
-            startGame(currentType);
+        // TTT LOGIC
+        let tttBoard = ["","","","","","","","",""], tttLive = true;
+        function openTTT() {
+            document.getElementById('game-modal').style.display = 'flex';
+            document.getElementById('ttt-wrap').style.display = 'flex';
+            document.getElementById('game-ui').style.display = 'none';
+            canvas.style.display = 'none';
+            resetTTT();
         }
-
-        function gameOver() {
-            gameActive = false;
-            document.getElementById('game-overlay').style.display = 'flex';
+        function makeMove(i) {
+            if(tttBoard[i] === "" && tttLive) {
+                tttBoard[i] = "X"; updateTTT();
+                if(!checkTTT()) setTimeout(botTTT, 500);
+            }
         }
+        function botTTT() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            let move = -1;
+            for(let w of wins) { // Win logic
+                let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
+                if(c.filter(v=>v==="O").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
+            }
+            if(move === -1) { // Block logic
+                for(let w of wins) {
+                    let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
+                    if(c.filter(v=>v==="X").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
+                }
+            }
+            if(move === -1) { // Random
+                let a = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+                move = a[Math.floor(Math.random()*a.length)];
+            }
+            if(move !== -1 && tttLive) { tttBoard[move] = "O"; updateTTT(); checkTTT(); }
+        }
+        function updateTTT() { document.querySelectorAll('.cell').forEach((c,i)=>c.innerText=tttBoard[i]); }
+        function checkTTT() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let w of wins) if(tttBoard[w[0]] && tttBoard[w[0]]===tttBoard[w[1]] && tttBoard[w[0]]===tttBoard[w[2]]) {
+                document.getElementById('ttt-status').innerText = tttBoard[w[0]] + " WINS!"; tttLive = false; return true;
+            }
+            if(!tttBoard.includes("")) { document.getElementById('ttt-status').innerText = "DRAW!"; tttLive = false; return true; }
+            return false;
+        }
+        function resetTTT() { tttBoard = ["","","","","","","","",""]; tttLive = true; document.getElementById('ttt-status').innerText = "YOU (X) VS BOT (O)"; updateTTT(); }
 
+        // CANVAS GAMES
         function startGame(type) {
             document.getElementById('game-modal').style.display = 'flex';
             document.getElementById('ttt-wrap').style.display = 'none';
             document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'block';
             canvas.style.display = 'block';
             canvas.width = 600; canvas.height = 400;
             currentType = type; gameActive = true; score = 0;
             if(type === 'dino') initDino();
             if(type === 'snake') initSnake();
-            if(type === 'zombies') initZombies();
-            gameLoop();
-        }
-
-        function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; }
-
-        function gameLoop() {
-            if(!gameActive) return;
-            ctx.clearRect(0,0,600,400);
-            if(currentType === 'dino') updateDino();
-            if(currentType === 'snake') updateSnake();
-            if(currentType === 'zombies') updateZombies();
-            document.getElementById('game-ui').innerText = "SCORE: " + score;
-            animationId = requestAnimationFrame(gameLoop);
-        }
-
-        /* --- MINI GAME LOGIC --- */
-        let dPlr, obs;
-        function initDino() { dPlr = {y: 350, v: 0}; obs = []; }
-        function updateDino() {
-            if(keys['Space'] && dPlr.y === 350) dPlr.v = -12;
-            dPlr.v += 0.6; dPlr.y += dPlr.v;
-            if(dPlr.y > 350) { dPlr.y = 350; dPlr.v = 0; }
-            ctx.fillStyle = "#fff"; ctx.fillRect(50, dPlr.y, 30, 30);
-            if(Math.random() < 0.02) obs.push({x: 600, w: 20});
-            obs.forEach((o, i) => {
-                o.x -= 6; ctx.fillStyle = "#0096ff"; ctx.fillRect(o.x, 350, o.w, 30);
-                if(o.x < 80 && o.x > 20 && dPlr.y > 320) gameOver();
-                if(o.x < -20) { obs.splice(i, 1); score++; }
-            });
-        }
-
-        let snk, sDir, food, sTick;
-        function initSnake() { snk = [{x: 10, y: 10}]; sDir = {x: 1, y: 0}; sTick = 0; food = {x: 5, y: 5}; }
-        function updateSnake() {
-            if(keys['ArrowUp'] && sDir.y === 0) sDir = {x:0, y:-1};
-            if(keys['ArrowDown'] && sDir.y === 0) sDir = {x:0, y:1};
-            if(keys['ArrowLeft'] && sDir.x === 0) sDir = {x:-1, y:0};
-            if(keys['ArrowRight'] && sDir.x === 0) sDir = {x:1, y:0};
-            if(++sTick % 10 === 0) {
-                let head = {x: snk[0].x + sDir.x, y: snk[0].y + sDir.y};
-                if(head.x < 0 || head.x >= 30 || head.y >= 20 || head.y < 0) return gameOver();
-                snk.unshift(head);
-                if(head.x === food.x && head.y === food.y) { score++; food = {x: Math.floor(Math.random()*30), y: Math.floor(Math.random()*20)}; }
-                else snk.pop();
-            }
-            ctx.fillStyle = "#0096ff"; snk.forEach(p => ctx.fillRect(p.x*20, p.y*20, 18, 18));
-            ctx.fillStyle = "#fff"; ctx.fillRect(food.x*20, food.y*20, 18, 18);
-        }
-
-        let zP, zmbs, blts;
-        function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
-        canvas.addEventListener('mousedown', (e) => { 
-            if(currentType === 'zombies' && gameActive) {
-                let rect = canvas.getBoundingClientRect();
-                let angle = Math.atan2(e.clientY - (rect.top + zP.y), e.clientX - (rect.left + zP.x));
-                blts.push({x: zP.x, y: zP.y, vx: Math.cos(angle)*7, vy: Math.sin(angle)*7});
-            }
-        });
-        function updateZombies() {
-            if(keys['KeyW']) zP.y -= 3; if(keys['KeyS']) zP.y += 3;
-            if(keys['KeyA']) zP.x -= 3; if(keys['KeyD']) zP.x += 3;
-            ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20);
-            if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400});
-            blts.forEach((b, i) => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); });
-            zmbs.forEach((z, i) => {
-                let a = Math.atan2(zP.y - z.y, zP.x - z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2;
-                ctx.fillStyle = "red"; ctx.fillRect(z.x-10, z.y-10, 20, 20);
-                if(Math.hypot(zP.x-z.x, zP.y-z.y) < 20) gameOver();
-                blts.forEach((b, bi) => { if(Math.hypot(z.x-b.x, z.y-b.y) < 15) { zmbs.splice(i, 1); blts.splice(bi, 1); score += 10; }});
-            });
-        }
-
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 200 },
-                "size": { "value": 1.5, "random": true },
-                "line_linked": { "enable": true, "distance": 100, "opacity": 0.4 },
-                "move": { "speed": 1 }
-            }
-        });
-    </script>
-</body>
-</html>
+            if(type
