@@ -10,6 +10,7 @@
             margin: 0; padding: 0; box-sizing: border-box;
             user-select: none; cursor: none !important;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none;
         }
 
         body {
@@ -46,12 +47,6 @@
         /* UI ELEMENTS */
         #particles-js { position: absolute; inset: 0; z-index: 1; }
 
-        #info-panel {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 420px; max-width: 90vw;
-            background: #050505; border: 1px solid #fff; padding: 25px; z-index: 8000;
-        }
-
         .content-wrapper {
             position: relative; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -61,20 +56,44 @@
         h1.title { 
             font-size: clamp(3.5rem, 12vw, 7rem); 
             letter-spacing: clamp(10px, 3vw, 30px); 
-            font-weight: 900; 
-            text-transform: uppercase;
-            margin-bottom: 10px;
+            font-weight: 900; text-transform: uppercase;
         }
 
         .btn-style {
             width: 280px; padding: 15px; border: 1px solid #fff;
             background: rgba(0,0,0,0.7); color: #fff; text-align: center;
-            text-decoration: none; letter-spacing: 2px; transition: 0.2s;
-            display: block;
+            letter-spacing: 2px; transition: 0.2s; display: block;
         }
 
         .btn-style:hover { border-color: #0096ff; color: #0096ff; }
-        .cashapp-btn { background: #fff; color: #000; font-weight: bold; }
+
+        /* MOBILE CONTROLS */
+        #mobile-controls {
+            display: none; position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); z-index: 6000; gap: 10px;
+        }
+
+        .ctrl-btn {
+            width: 60px; height: 60px; border: 1px solid #fff;
+            background: rgba(255,255,255,0.1); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; border-radius: 50%;
+        }
+
+        /* GAME MODAL */
+        #game-modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.98); z-index: 5000;
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        #game-canvas { background: #000; border: 1px solid #333; max-width: 95vw; max-height: 50vh; }
+
+        #game-overlay { 
+            position: absolute; display: none; flex-direction: column; 
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
+            top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5001;
+        }
 
         /* DROPDOWN */
         .dropdown { position: relative; width: 280px; }
@@ -85,56 +104,26 @@
         .dropdown-content button {
             width: 100%; padding: 12px; background: none; border: none;
             color: #fff; font-family: inherit; border-bottom: 1px solid #222;
-            cursor: none !important;
-        }
-        .dropdown-content button:hover { background: #fff; color: #000; }
-
-        /* GAME MODAL */
-        #game-modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.98); z-index: 5000;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
-        #game-canvas { background: #000; border: 1px solid #333; margin: 0 auto; }
-        #game-overlay { 
-            position: absolute; display: none; flex-direction: column; 
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.9); padding: 30px; border: 1px solid #fff;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 5001;
         }
 
         /* TIC TAC TOE */
-        #ttt-wrap { display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #ttt-grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin: 20px 0; }
-        .cell { 
-            width: 100px; height: 100px; border: 1px solid #fff; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 2.5rem; font-weight: bold;
-        }
+        #ttt-wrap { display: none; flex-direction: column; align-items: center; }
+        #ttt-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 10px; margin: 20px 0; }
+        .cell { width: 80px; height: 80px; border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
 
         #intro-overlay {
             position: fixed; inset: 0; background: #000; z-index: 9000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; transition: 0.5s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px;
         }
 
         body.mobile-mode #cursor-wrapper { display: none; }
         body.mobile-mode * { cursor: auto !important; }
+        body.mobile-mode #mobile-controls { display: flex; }
     </style>
 </head>
 <body>
 
     <div id="music-player" style="display:none;"></div>
-
-    <button id="info-btn" class="hover-target" style="position:fixed; top:20px; left:20px; z-index:100; background:none; color:white; border:1px solid white; padding:5px 10px;" onclick="toggleInfo(true)">INFO</button>
-
-    <div id="info-panel">
-        <button class="hover-target" style="float:right; background:none; border:none; color:white; font-size:1.2rem;" onclick="toggleInfo(false)">[X]</button>
-        <p>Hi, I'm Cloudz. Pretty sure you figured that out already from the giant "CLOUDZ" text on the mainpage.</p>
-        <p>I do a lot of coding, especially with Python. I'm currently trying to learn every major language I need to know to make whatever I want.</p>
-        <p>See that Cash App button? If you want to support me, you can donate there or use it for business (yes you have to pay which is negotiable). If you want to talk business for an app or a website, DM me on discord.</p>
-        <p style="font-size:0.8rem; opacity:0.5;">Anyway, you can close this now.</p>
-    </div>
 
     <div id="cursor-wrapper">
         <div id="reticle-top-left" class="reticle-part"></div>
@@ -146,7 +135,7 @@
 
     <div id="intro-overlay">
         <div class="hover-target" style="font-size: 1.5rem; letter-spacing: 5px;" onclick="enterSite()">CLICK TO ENTER</div>
-        <button id="mobile-toggle" class="hover-target" style="background:none; border:1px solid #444; color:#666; padding:10px 20px;" onclick="setMobile(event)">ARE YOU ON MOBILE?</button>
+        <button id="mobile-toggle" class="hover-target" style="background:none; border:1px solid #444; color:#666; padding:10px 20px;" onclick="setMobile(event)">MOBILE MODE: OFF</button>
     </div>
 
     <div id="particles-js"></div>
@@ -154,47 +143,56 @@
     <div class="content-wrapper">
         <h1 class="title hover-target">Cloudz</h1>
         <div class="btn-style hover-target" id="discord-txt" onclick="copyDiscord()">DISCORD: hellothere.33</div>
-        <a href="https://cash.app/$roman479" target="_blank" class="btn-style cashapp-btn hover-target">CASH APP</a>
+        <a href="https://cash.app/$roman479" target="_blank" class="btn-style hover-target" style="background:#fff; color:#000; font-weight:bold;">CASH APP</a>
         
         <div class="dropdown">
             <button onclick="toggleDropdown()" class="btn-style hover-target">GAMES</button>
             <div id="gameDrop" class="dropdown-content">
-                <button onclick="startGame('dino')" class="hover-target">DINO</button>
-                <button onclick="startGame('snake')" class="hover-target">SNAKE</button>
-                <button onclick="startGame('zombies')" class="hover-target">ZOMBIES</button>
-                <button onclick="openTTT()" class="hover-target">TIC-TAC-TOE</button>
+                <button onclick="startGame('dino')">DINO</button>
+                <button onclick="startGame('snake')">SNAKE</button>
+                <button onclick="startGame('zombies')">ZOMBIES</button>
+                <button onclick="openTTT()">TIC-TAC-TOE</button>
             </div>
         </div>
     </div>
 
     <div id="game-modal">
-        <button onclick="closeGame()" class="hover-target" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.2rem;">[CLOSE]</button>
+        <button onclick="closeGame()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.2rem;">[CLOSE]</button>
+        <div id="game-ui" style="margin-bottom:10px; font-weight:bold;">SCORE: 0</div>
         
-        <div id="game-container" style="position:relative; display:flex; flex-direction:column; align-items:center;">
-            <div id="game-ui" style="text-align:center; margin-bottom:10px; font-weight:bold; font-size: 1.2rem;">SCORE: 0</div>
-            
-            <canvas id="game-canvas"></canvas>
+        <canvas id="game-canvas"></canvas>
 
-            <div id="ttt-wrap">
-                <h2 id="ttt-status">YOU (X) VS BOT (O)</h2>
-                <div id="ttt-grid">
-                    <div class="cell hover-target" onclick="makeMove(0)"></div>
-                    <div class="cell hover-target" onclick="makeMove(1)"></div>
-                    <div class="cell hover-target" onclick="makeMove(2)"></div>
-                    <div class="cell hover-target" onclick="makeMove(3)"></div>
-                    <div class="cell hover-target" onclick="makeMove(4)"></div>
-                    <div class="cell hover-target" onclick="makeMove(5)"></div>
-                    <div class="cell hover-target" onclick="makeMove(6)"></div>
-                    <div class="cell hover-target" onclick="makeMove(7)"></div>
-                    <div class="cell hover-target" onclick="makeMove(8)"></div>
+        <div id="ttt-wrap">
+            <h2 id="ttt-status">YOU (X) VS BOT (O)</h2>
+            <div id="ttt-grid">
+                <div class="cell" onclick="makeMove(0)"></div>
+                <div class="cell" onclick="makeMove(1)"></div>
+                <div class="cell" onclick="makeMove(2)"></div>
+                <div class="cell" onclick="makeMove(3)"></div>
+                <div class="cell" onclick="makeMove(4)"></div>
+                <div class="cell" onclick="makeMove(5)"></div>
+                <div class="cell" onclick="makeMove(6)"></div>
+                <div class="cell" onclick="makeMove(7)"></div>
+                <div class="cell" onclick="makeMove(8)"></div>
+            </div>
+            <button class="btn-style" onclick="resetTTT()">RESET</button>
+        </div>
+
+        <div id="game-overlay">
+            <h1>GAME OVER</h1>
+            <button class="btn-style" onclick="restartGame()" style="margin-top:15px;">RETRY</button>
+        </div>
+
+        <div id="mobile-controls">
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <button class="ctrl-btn" ontouchstart="handleTouch('ArrowUp')" ontouchend="handleTouchEnd('ArrowUp')">↑</button>
+                <div style="display:flex; gap:10px;">
+                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowLeft')" ontouchend="handleTouchEnd('ArrowLeft')">←</button>
+                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowDown')" ontouchend="handleTouchEnd('ArrowDown')">↓</button>
+                    <button class="ctrl-btn" ontouchstart="handleTouch('ArrowRight')" ontouchend="handleTouchEnd('ArrowRight')">→</button>
                 </div>
-                <button class="btn-style hover-target" onclick="resetTTT()">RESET BOARD</button>
             </div>
-
-            <div id="game-overlay">
-                <h1 id="over-text">GAME OVER</h1>
-                <button class="btn-style hover-target" onclick="restartGame()" style="margin-top:15px;">RETRY</button>
-            </div>
+            <button class="ctrl-btn" style="width:80px; border-radius:10px;" ontouchstart="handleTouch('Space')" ontouchend="handleTouchEnd('Space')">ACTION</button>
         </div>
     </div>
 
@@ -207,19 +205,33 @@
         let gameActive = false, score = 0, currentType = '', animationId;
         let keys = {};
 
-        window.addEventListener("keydown", e => {
-            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
-            keys[e.code] = true;
-        });
-        window.addEventListener('keyup', e => keys[e.code] = false);
-
-        function setMobile(e) { e.stopPropagation(); isMobile = true; document.body.classList.add('mobile-mode'); }
+        function setMobile(e) { 
+            e.stopPropagation(); 
+            isMobile = !isMobile; 
+            document.body.classList.toggle('mobile-mode', isMobile);
+            e.target.innerText = isMobile ? "MOBILE MODE: ON" : "MOBILE MODE: OFF";
+        }
         
         function enterSite() { 
             document.getElementById('intro-overlay').style.opacity = '0'; 
             setTimeout(() => document.getElementById('intro-overlay').style.display = 'none', 500);
             document.getElementById('music-player').innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/Cz2YCRmDOFk?autoplay=1&loop=1&playlist=Cz2YCRmDOFk" frameborder="0" allow="autoplay"></iframe>`;
         }
+
+        // MOBILE INPUT ADAPTER
+        function handleTouch(key) { keys[key] = true; if(currentType==='dino') keys['Space']=true; }
+        function handleTouchEnd(key) { keys[key] = false; if(currentType==='dino') keys['Space']=false; }
+        canvas.addEventListener('touchstart', e => {
+            if(currentType === 'zombies') {
+                const r = canvas.getBoundingClientRect();
+                const t = e.touches[0];
+                const a = Math.atan2(t.clientY - (r.top + zP.y), t.clientX - (r.left + zP.x));
+                blts.push({x: zP.x, y: zP.y, vx: Math.cos(a)*7, vy: Math.sin(a)*7});
+            }
+        });
+
+        window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); keys[e.code] = true; });
+        window.addEventListener('keyup', e => keys[e.code] = false);
 
         document.addEventListener('mousemove', e => {
             if(!isMobile) {
@@ -233,57 +245,30 @@
         function animateCursor() { rot += 2; cur.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`; requestAnimationFrame(animateCursor); }
         animateCursor();
 
-        function toggleInfo(s) { document.getElementById('info-panel').style.display = s ? 'block' : 'none'; }
-        function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
-
         function copyDiscord() {
             const tag = "hellothere.33";
-            const el = document.createElement('textarea');
-            el.value = tag;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            const box = document.getElementById('discord-txt');
-            box.textContent = "COPIED!";
-            box.style.color = "#0096ff";
-            setTimeout(() => { box.textContent = "DISCORD: " + tag; box.style.color = "#fff"; }, 1500);
+            navigator.clipboard.writeText(tag).then(() => {
+                const box = document.getElementById('discord-txt');
+                box.textContent = "COPIED!";
+                setTimeout(() => box.textContent = "DISCORD: " + tag, 1500);
+            });
         }
 
-        // TTT LOGIC
+        function toggleDropdown() { const d = document.getElementById('gameDrop'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
+
+        // TTT
         let tttBoard = ["","","","","","","","",""], tttLive = true;
         function openTTT() {
             document.getElementById('game-modal').style.display = 'flex';
             document.getElementById('ttt-wrap').style.display = 'flex';
-            document.getElementById('game-ui').style.display = 'none';
-            document.getElementById('game-overlay').style.display = 'none';
             canvas.style.display = 'none';
+            document.getElementById('game-ui').style.display = 'none';
             resetTTT();
         }
-        function makeMove(i) {
-            if(tttBoard[i] === "" && tttLive) {
-                tttBoard[i] = "X"; updateTTT();
-                if(!checkTTT()) setTimeout(botTTT, 500);
-            }
-        }
+        function makeMove(i) { if(tttBoard[i]==="" && tttLive) { tttBoard[i]="X"; updateTTT(); if(!checkTTT()) setTimeout(botTTT, 500); } }
         function botTTT() {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            let move = -1;
-            for(let w of wins) {
-                let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
-                if(c.filter(v=>v==="O").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
-            }
-            if(move === -1) {
-                for(let w of wins) {
-                    let c = [tttBoard[w[0]], tttBoard[w[1]], tttBoard[w[2]]];
-                    if(c.filter(v=>v==="X").length===2 && c.filter(v=>v==="").length===1) move = w[c.indexOf("")];
-                }
-            }
-            if(move === -1) {
-                let a = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-                move = a[Math.floor(Math.random()*a.length)];
-            }
-            if(move !== -1 && tttLive) { tttBoard[move] = "O"; updateTTT(); checkTTT(); }
+            let move = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null)[0];
+            if(move!==undefined && tttLive) { tttBoard[move]="O"; updateTTT(); checkTTT(); }
         }
         function updateTTT() { document.querySelectorAll('.cell').forEach((c,i)=>c.innerText=tttBoard[i]); }
         function checkTTT() {
@@ -291,12 +276,11 @@
             for(let w of wins) if(tttBoard[w[0]] && tttBoard[w[0]]===tttBoard[w[1]] && tttBoard[w[0]]===tttBoard[w[2]]) {
                 document.getElementById('ttt-status').innerText = tttBoard[w[0]] + " WINS!"; tttLive = false; return true;
             }
-            if(!tttBoard.includes("")) { document.getElementById('ttt-status').innerText = "DRAW!"; tttLive = false; return true; }
             return false;
         }
-        function resetTTT() { tttBoard = ["","","","","","","","",""]; tttLive = true; document.getElementById('ttt-status').innerText = "YOU (X) VS BOT (O)"; updateTTT(); }
+        function resetTTT() { tttBoard = ["","","","","","","","",""]; tttLive = true; updateTTT(); }
 
-        // CANVAS GAMES
+        // GAMES
         function startGame(type) {
             document.getElementById('game-modal').style.display = 'flex';
             document.getElementById('ttt-wrap').style.display = 'none';
@@ -310,7 +294,7 @@
             if(type === 'zombies') initZombies();
             gameLoop();
         }
-        function restartGame() { document.getElementById('game-overlay').style.display = 'none'; startGame(currentType); }
+        function restartGame() { startGame(currentType); }
         function gameOver() { gameActive = false; document.getElementById('game-overlay').style.display = 'flex'; }
         function closeGame() { gameActive = false; document.getElementById('game-modal').style.display = 'none'; cancelAnimationFrame(animationId); }
         
@@ -359,16 +343,9 @@
 
         let zP, zmbs, blts;
         function initZombies() { zP = {x: 300, y: 200}; zmbs = []; blts = []; }
-        canvas.addEventListener('mousedown', e => { 
-            if(currentType === 'zombies' && gameActive) {
-                let r = canvas.getBoundingClientRect();
-                let a = Math.atan2(e.clientY - (r.top + zP.y), e.clientX - (r.left + zP.x));
-                blts.push({x: zP.x, y: zP.y, vx: Math.cos(a)*7, vy: Math.sin(a)*7});
-            }
-        });
         function updateZombies() {
-            if(keys['KeyW']) zP.y -= 3; if(keys['KeyS']) zP.y += 3;
-            if(keys['KeyA']) zP.x -= 3; if(keys['KeyD']) zP.x += 3;
+            if(keys['ArrowUp']) zP.y -= 4; if(keys['ArrowDown']) zP.y += 4;
+            if(keys['ArrowLeft']) zP.x -= 4; if(keys['ArrowRight']) zP.x += 4;
             ctx.fillStyle = "#fff"; ctx.fillRect(zP.x-10, zP.y-10, 20, 20);
             if(Math.random() < 0.05) zmbs.push({x: Math.random()*600, y: Math.random()*400});
             blts.forEach(b => { b.x += b.vx; b.y += b.vy; ctx.fillStyle = "cyan"; ctx.fillRect(b.x, b.y, 5, 5); });
@@ -380,9 +357,7 @@
             });
         }
 
-        particlesJS("particles-js", {
-            "particles": { "number": { "value": 250 }, "size": { "value": 1.5, "random": true }, "line_linked": { "enable": true, "distance": 80, "opacity": 0.4 }, "move": { "speed": 1 } }
-        });
+        particlesJS("particles-js", { "particles": { "number": { "value": 150 }, "size": { "value": 1.5 }, "line_linked": { "enable": true, "opacity": 0.4 }, "move": { "speed": 1 } } });
     </script>
 </body>
 </html>
