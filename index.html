@@ -6,9 +6,8 @@
     
     <title>CLOUDZZZ!!!</title>
     <meta property="og:title" content="CLOUDZZZ!!!">
-    <meta property="og:description" content="this is my website... do you like it? it has my info about me (you prob dont need it unless u want a cool website) it has my uh cashapp, discod and uhhhhh roblox to donate to..... also i made games in it... they are kinda buggy but please play them 🥺">
+    <meta property="og:description" content="this is my website... do you like it? it has my info, games, and more! 🥺">
     <meta property="og:image" content="https://i.ibb.co/v4m0YvL/image-631268.png">
-    <meta property="og:type" content="website">
     <meta name="theme-color" content="#00A2FF">
 
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -24,8 +23,19 @@
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* CUSTOM RETICLE CURSOR */
-        #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); }
+        /* SPINNING RETICLE CURSOR */
+        #cursor-wrapper { 
+            position: fixed; 
+            pointer-events: none; 
+            z-index: 999999; 
+            mix-blend-mode: difference; 
+            transform: translate(-50%, -50%);
+            animation: rotateCursor 4s linear infinite; 
+        }
+        @keyframes rotateCursor {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
         .reticle-part { position: absolute; border: 1.5px solid #fff; width: 15px; height: 15px; }
         #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
         #reticle-top-right { top: -12px; right: -12px; border-left: none; border-bottom: none; }
@@ -142,7 +152,39 @@
             document.getElementById('intro-overlay').style.display='none';
             document.getElementById('auth-modal').style.display='block';
             document.getElementById('bg-music').play().catch(()=>{});
-            particlesJS("particles-js", { "particles": { "number": { "value": 120 }, "line_linked": { "enable": true, "opacity": 0.2 }, "move": { "speed": 0.8 } } });
+            
+            // CLEAN PIN-PRICK STAR CONSTELLATION CONFIG
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": 200, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#ffffff" },
+                    "shape": { "type": "circle" },
+                    "opacity": { 
+                        "value": 0.5, 
+                        "random": true,
+                        "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+                    },
+                    "size": { "value": 1, "random": false }, // NO BLOBS, ONLY DOTS
+                    "line_linked": { 
+                        "enable": true, 
+                        "distance": 100, 
+                        "color": "#ffffff", 
+                        "opacity": 0.05, // VERY DIM LINES
+                        "width": 1 
+                    },
+                    "move": { "enable": true, "speed": 0.3, "direction": "none", "random": true, "straight": false, "out_mode": "out" }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": { "enable": true, "mode": "grab" }
+                    },
+                    "modes": {
+                        "grab": { "distance": 150, "line_linked": { "opacity": 0.3 } }
+                    }
+                },
+                "retina_detect": true
+            });
         }
 
         function login() {
@@ -170,7 +212,6 @@
 
         function copyDiscord() { navigator.clipboard.writeText("hellothere.33"); document.getElementById('btn-discord').innerText = "COPIED"; setTimeout(()=>document.getElementById('btn-discord').innerText="DISCORD: hellothere.33", 2000); }
 
-        // SHOOTING LOGIC
         function handleShoot(e) {
             if(currentType === 'zombies' && active) {
                 let rect = canvas.getBoundingClientRect();
