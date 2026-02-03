@@ -5,23 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CLOUDZ!!!!</title>
     
-    <meta property="og:title" content="CLOUDZ">
-    <meta property="og:description" content="this is my website... it took like a ay to make... it has my dc cashapp and uuhhhh roblxiox for donations and business (msg me on discord if u want a super cool app or website, i make .exe for apps and sometimes .apk for androids anyways toodloo">
-    <meta property="og:type" content="website">
-    <meta name="theme-color" content="#ffffff">
-
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; outline: none; }
-        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
+        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* SPINNING RETICLE */
+        /* THE SIGNATURE RETICLE */
         #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); animation: rotateCursor 4s linear infinite; }
         @keyframes rotateCursor { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .reticle-part { position: absolute; border: 2px solid #fff; width: 15px; height: 15px; }
@@ -31,27 +25,25 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* UI SYSTEM */
-        h1.title { font-size: clamp(3rem, 10vw, 5rem); letter-spacing: 20px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.5); z-index: 10; }
-        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; max-width: 90vw; background: rgba(0,0,0,0.95); border: 1px solid #444; padding: 40px; z-index: 5000; text-align: center; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,1); }
+        /* OLD SCHOOL CLOUDZ FONT */
+        h1.title { font-size: 120px; letter-spacing: 40px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 30px #fff; z-index: 10; font-family: 'Arial Black', sans-serif; }
         
-        .btn-style, .tiny-btn { width: 100%; max-width: 300px; padding: 14px; border: 1px solid #fff; background: transparent; color: #fff; letter-spacing: 3px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.2s; font-family: inherit; font-weight: 600; text-decoration: none; font-size: 0.8rem; }
-        .btn-style:hover { background: #fff; color: #000; transform: translateY(-2px); }
-
-        #btn-discord { border-color: #5865F2; color: #5865F2; } #btn-discord:hover { background: #5865F2; color: #fff; }
-        #btn-cashapp { border-color: #00D632; color: #00D632; } #btn-cashapp:hover { background: #00D632; color: #fff; }
-        #btn-robux { border-color: #00A2FF; color: #00A2FF; } #btn-robux:hover { background: #00A2FF; color: #fff; }
+        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 40px; z-index: 5000; text-align: center; }
+        
+        .btn-style, .tiny-btn { width: 100%; max-width: 350px; padding: 15px; border: 1px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.1s; font-weight: bold; text-decoration: none; font-size: 0.9rem; }
+        .btn-style:hover { background: #fff; color: #000; }
 
         .corner-controls { position: fixed; top: 30px; left: 30px; z-index: 1000; display: none; flex-direction: column; gap: 15px; }
         
-        /* TAG ARENA UI */
-        #tag-container { display: none; flex-direction: column; align-items: center; z-index: 4000; position: fixed; inset: 0; background: #000; padding: 20px; }
-        #tag-canvas { background: #080808; border: 1px solid #333; }
-        #tag-header { margin-bottom: 10px; font-size: 0.9rem; letter-spacing: 3px; font-weight: bold; }
+        /* TAG ARENA */
+        #tag-container { display: none; flex-direction: column; align-items: center; z-index: 4000; position: fixed; inset: 0; background: #000; padding: 10px; }
+        #tag-canvas { background: #050505; border: 2px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        
+        #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 320px; height: 450px; background: #000; border: 1px solid #fff; z-index: 1000; flex-direction: column; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.75rem; text-align: left; color: #fff; }
+        #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #fff; }
 
-        #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 300px; height: 400px; background: rgba(0,0,0,0.9); border: 1px solid #333; z-index: 1000; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; }
-        #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #333; font-family: inherit; }
+        canvas#game-canvas { background: #000; border: 1px solid #fff; display: none; margin: 20px auto; }
     </style>
 </head>
 <body>
@@ -60,28 +52,42 @@
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style" style="width:auto; padding: 20px 60px;" onclick="initApp()">INITIALIZE</button>
+        <button class="btn-style" style="width:auto; padding: 25px 80px;" onclick="initApp()">ENTER CLOUDZ</button>
     </div>
 
     <div id="login-modal" class="modal-box" style="display:block;">
-        <h2 style="letter-spacing:5px;">USER AUTH</h2><br>
-        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#111; border:1px solid #333; color:#fff; padding:12px; width:100%; margin-bottom:10px; text-align:center;">
-        <input type="password" id="user-pw" placeholder="PASS" style="background:#111; border:1px solid #333; color:#fff; padding:12px; width:100%; margin-bottom:20px; text-align:center;">
-        <button class="btn-style" onclick="handleAuth()">LOGIN / REGISTER</button>
+        <h2 style="letter-spacing:10px;">ACCESS</h2><br>
+        <input type="text" id="user-id" placeholder="USERNAME" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin-bottom:10px; text-align:center;">
+        <input type="password" id="user-pw" placeholder="PASSWORD" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin-bottom:20px; text-align:center;">
+        <button class="btn-style" onclick="handleAuth()">LOGIN</button>
     </div>
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
-        <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: cloudz.cloud</button>
-        <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
-        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">ROBLOX DONATE</a>
-        <button class="btn-style" style="border-color: #ff0000; color: #ff0000;" onclick="toggleTagMode(true)">GLOBAL TAG ARENA</button>
+        <button class="btn-style" onclick="toggleTagMode(true)" style="border-color: #f00; color: #f00;">GLOBAL TAG</button>
+        <button class="btn-style" onclick="openModal('games-hub')">MINIGAMES</button>
+        <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD</button>
+        <a href="https://cash.app/$roman479" target="_blank" class="btn-style" style="color:#0f0; border-color:#0f0;">CASH APP</a>
+    </div>
+
+    <div id="games-hub" class="modal-box">
+        <h2 style="letter-spacing:5px;">GAMES</h2>
+        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
+        <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
+        <button class="btn-style" onclick="closeModals()">BACK</button>
+    </div>
+
+    <div id="play-area" class="modal-box">
+        <h3 id="g-status" style="margin-bottom:10px;">SCORE: 0</h3>
+        <canvas id="game-canvas" width="400" height="400"></canvas>
+        <button class="btn-style" onclick="closeModals()">EXIT</button>
     </div>
 
     <div id="tag-container">
-        <div id="tag-header">GLOBAL TAG | YOU: <span id="status-text">RUNNER</span></div>
-        <canvas id="tag-canvas" width="900" height="600"></canvas>
-        <button class="btn-style" style="max-width: 150px; padding: 10px;" onclick="toggleTagMode(false)">LEAVE</button>
+        <div style="letter-spacing:5px; margin-bottom:5px;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></div>
+        <canvas id="tag-canvas" width="1000" height="650"></canvas>
+        <button class="btn-style" style="max-width:200px;" onclick="toggleTagMode(false)">LEAVE</button>
     </div>
 
     <div class="corner-controls" id="controls">
@@ -90,7 +96,7 @@
 
     <div id="chat-window">
         <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder=">> SEND">
+        <input type="text" id="chat-input" placeholder=">> TYPE">
     </div>
 
     <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
@@ -100,22 +106,21 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", players = {}, itPlayer = "", keys = {};
+        let myUser = "", players = {}, itPlayer = "", keys = {}, grabbing = false;
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
-
-        // Obstacle Data
-        const obstacles = [
-            {x: 200, y: 150, w: 100, h: 20}, {x: 600, y: 150, w: 100, h: 20},
-            {x: 400, y: 250, w: 100, h: 100}, 
-            {x: 200, y: 430, w: 100, h: 20}, {x: 600, y: 430, w: 100, h: 20},
-            {x: 50, y: 280, w: 80, h: 40}, {x: 770, y: 280, w: 80, h: 40}
-        ];
+        const obstacles = [{x: 450, y: 275, w: 100, h: 100}, {x: 150, y: 150, w: 150, h: 20}, {x: 700, y: 450, w: 150, h: 20}];
 
         window.addEventListener('mousemove', e => { 
             const cur = document.getElementById('cursor-wrapper');
-            cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; 
+            cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+            if(grabbing && myUser) {
+                const rect = tagCanvas.getBoundingClientRect();
+                db.ref('globalTag/players/' + myUser).set({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+            }
         });
+        window.addEventListener('mousedown', () => grabbing = true);
+        window.addEventListener('mouseup', () => grabbing = false);
         window.addEventListener('keydown', e => keys[e.code] = true);
         window.addEventListener('keyup', e => keys[e.code] = false);
 
@@ -124,13 +129,13 @@
             document.getElementById('bg-music').play();
             particlesJS("particles-js", {
                 "particles": {
-                    "number": { "value": 150, "density": { "enable": true, "value_area": 800 } },
+                    "number": { "value": 130 },
+                    "color": { "value": "#ffffff" },
+                    "shape": { "type": "circle" },
                     "opacity": { "value": 1 },
-                    "size": { "value": 3 }, // BOLD STARS
-                    "line_linked": { 
-                        "enable": true, "distance": 140, "color": "#ffffff", "opacity": 0.5, "width": 1.8 // SEMI BOLD LINES
-                    },
-                    "move": { "enable": true, "speed": 0.8 }
+                    "size": { "value": 4 }, // DEFINED STARS
+                    "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.8, "width": 2 }, // BOLD CONSTELLATIONS
+                    "move": { "enable": true, "speed": 1.5 }
                 }
             });
         }
@@ -138,11 +143,11 @@
         async function handleAuth() {
             const u = document.getElementById('user-id').value.trim();
             const p = document.getElementById('user-pw').value.trim();
-            if(!u || !p) return alert("REQUIRED");
+            if(!u || !p) return;
             const snap = await db.ref('users/' + u).once('value');
             if(snap.exists()) {
                 if(snap.val().pw === p) loginSuccess(u);
-                else alert("FAILED");
+                else alert("DENIED");
             } else {
                 await db.ref('users/' + u).set({pw: p});
                 loginSuccess(u);
@@ -154,102 +159,110 @@
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
             document.getElementById('controls').style.display='flex';
-            
-            db.ref('chat').limitToLast(15).on('child_added', s => {
+            db.ref('chat').limitToLast(20).on('child_added', s => {
                 const h = document.getElementById('chat-history');
-                h.innerHTML += `<div><span style="color:#666;">[${s.val().u}]</span>: ${s.val().t}</div>`;
+                h.innerHTML += `<div><span style="color:#fff; font-weight:bold;">${s.val().u}</span>: ${s.val().t}</div>`;
                 h.scrollTop = h.scrollHeight;
             });
-
             db.ref('globalTag/it').on('value', s => { itPlayer = s.val(); });
             db.ref('globalTag/players').on('value', s => { players = s.val() || {}; });
         }
 
-        function toggleTagMode(active) {
-            document.getElementById('tag-container').style.display = active ? 'flex' : 'none';
-            document.getElementById('main-content').style.display = active ? 'none' : 'flex';
-            if(active) {
+        function toggleTagMode(on) {
+            document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
+            document.getElementById('main-content').style.display = on ? 'none' : 'flex';
+            if(on) {
                 db.ref('globalTag/players/' + myUser).set({ x: 100, y: 100 });
-                db.ref('globalTag/it').transaction(cur => cur || myUser);
-                requestAnimationFrame(gameLoop);
+                db.ref('globalTag/it').transaction(c => c || myUser);
+                requestAnimationFrame(tagLoop);
             } else {
                 db.ref('globalTag/players/' + myUser).remove();
             }
         }
 
-        function gameLoop() {
+        function tagLoop() {
             if (document.getElementById('tag-container').style.display === 'none') return;
-
-            let me = players[myUser] || {x: 100, y: 100};
+            let me = players[myUser] || {x:100, y:100};
             let oldX = me.x, oldY = me.y;
-            let speed = 5;
-
-            if(keys['KeyW']) me.y -= speed;
-            if(keys['KeyS']) me.y += speed;
-            if(keys['KeyA']) me.x -= speed;
-            if(keys['KeyD']) me.x += speed;
-
-            // Border & Obstacle Collision
-            if(me.x < 15) me.x = 15; if(me.x > 885) me.x = 885;
-            if(me.y < 15) me.y = 15; if(me.y > 585) me.y = 585;
-
+            if(!grabbing) {
+                if(keys['KeyW']) me.y -= 6; if(keys['KeyS']) me.y += 6;
+                if(keys['KeyA']) me.x -= 6; if(keys['KeyD']) me.x += 6;
+            }
+            // Collisions
             obstacles.forEach(o => {
-                if(me.x + 15 > o.x && me.x - 15 < o.x + o.w && me.y + 15 > o.y && me.y - 15 < o.y + o.h) {
-                    me.x = oldX; me.y = oldY;
-                }
+                if(me.x + 15 > o.x && me.x - 15 < o.x + o.w && me.y + 15 > o.y && me.y - 15 < o.y + o.h) { me.x = oldX; me.y = oldY; }
             });
-
             if(me.x !== oldX || me.y !== oldY) db.ref('globalTag/players/' + myUser).set(me);
 
-            // Tagger Logic
             if(itPlayer === myUser) {
-                document.getElementById('status-text').innerText = "IT (TAG SOMEONE!)";
-                document.getElementById('status-text').style.color = "red";
+                document.getElementById('tag-status').innerText = "IT"; document.getElementById('tag-status').style.color = "red";
                 for(let id in players) {
-                    if(id !== myUser) {
-                        let other = players[id];
-                        if(Math.hypot(me.x - other.x, me.y - other.y) < 30) {
-                            db.ref('globalTag/it').set(id);
-                            db.ref('chat').push({u: "INFO", t: `${myUser} TAGGED ${id}!`});
-                        }
+                    if(id !== myUser && Math.hypot(me.x - players[id].x, me.y - players[id].y) < 30) {
+                        db.ref('globalTag/it').set(id);
                     }
                 }
-            } else {
-                document.getElementById('status-text').innerText = "RUNNER";
-                document.getElementById('status-text').style.color = "white";
-            }
+            } else { document.getElementById('tag-status').innerText = "RUNNER"; document.getElementById('tag-status').style.color = "white"; }
 
-            // Rendering
-            tagCtx.clearRect(0,0,900,600);
-            
-            // Draw Obstacles
-            tagCtx.fillStyle = "#222";
-            obstacles.forEach(o => tagCtx.fillRect(o.x, o.y, o.w, o.h));
-
-            // Draw Players
+            tagCtx.clearRect(0,0,1000,650);
+            obstacles.forEach(o => { tagCtx.strokeStyle="#fff"; tagCtx.strokeRect(o.x, o.y, o.w, o.h); });
             for(let id in players) {
-                let p = players[id];
                 tagCtx.fillStyle = (id === itPlayer) ? "#f00" : "#fff";
-                tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
-                tagCtx.fillStyle = "#888";
-                tagCtx.font = "10px Segoe UI";
-                tagCtx.fillText(id, p.x - 15, p.y - 22);
+                tagCtx.fillRect(players[id].x - 15, players[id].y - 15, 30, 30);
             }
-            requestAnimationFrame(gameLoop);
+            requestAnimationFrame(tagLoop);
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModals() { 
+            ['games-hub', 'play-area'].forEach(m => document.getElementById(m).style.display = 'none'); 
+            clearInterval(gameLoop); 
+            document.getElementById('game-canvas').style.display = 'none';
+        }
+
+        // --- MINI GAMES ---
+        let gameLoop, score, snake, sDir, food, pX, pY, zoms, bullets;
+        function launchGame(t) {
+            closeModals(); openModal('play-area');
+            const cvs = document.getElementById('game-canvas'); cvs.style.display = 'block';
+            const ctx = cvs.getContext('2d'); score = 0;
+            if(t === 'snake') {
+                snake = [{x:10,y:10}]; sDir='R'; food={x:15,y:15};
+                gameLoop = setInterval(() => {
+                    let h = {...snake[0]};
+                    if(keys['ArrowUp']) sDir='U'; if(keys['ArrowDown']) sDir='D';
+                    if(keys['ArrowLeft']) sDir='L'; if(keys['ArrowRight']) sDir='R';
+                    if(sDir==='U') h.y--; if(sDir==='D') h.y++; if(sDir==='L') h.x--; if(sDir==='R') h.x++;
+                    snake.unshift(h);
+                    if(h.x===food.x && h.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; } else snake.pop();
+                    ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
+                    ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
+                    document.getElementById('g-status').innerText = "SCORE: " + score;
+                }, 100);
+            }
+            if(t === 'zombies') {
+                pX=200; pY=200; zoms=[]; bullets=[];
+                gameLoop = setInterval(() => {
+                    if(keys['KeyW']) pY-=4; if(keys['KeyS']) pY+=4; if(keys['KeyA']) pX-=4; if(keys['KeyD']) pX+=4;
+                    if(Math.random()<0.05) zoms.push({x:Math.random()*400, y:0});
+                    ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(pX-10,pY-10,20,20);
+                    zoms.forEach((z,i) => {
+                        let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*2; z.y+=(pY-z.y)/d*2;
+                        ctx.fillStyle="#f00"; ctx.fillRect(z.x-8, z.y-8, 16, 16);
+                        if(d<15) { clearInterval(gameLoop); alert("DEAD"); closeModals(); }
+                    });
+                }, 20);
+            }
         }
 
         function toggleChat() { 
             const cw = document.getElementById('chat-window');
             cw.style.display = cw.style.display === 'flex' ? 'none' : 'flex';
         }
-
         document.getElementById('chat-input').onkeydown = e => {
             if(e.key === 'Enter' && e.target.value.trim()) {
-                db.ref('chat').push({u: myUser, t: e.target.value});
-                e.target.value = "";
+                db.ref('chat').push({u: myUser, t: e.target.value}); e.target.value = "";
             }
         };
-
         function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("COPIED"); }
     </script>
 </body>
