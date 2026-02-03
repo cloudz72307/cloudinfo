@@ -6,8 +6,9 @@
     
     <title>CLOUDZZZ!!!</title>
     <meta property="og:title" content="CLOUDZZZ!!!">
-    <meta property="og:description" content="this is my website... do you like it? it has games, chat, and info! come play 🥺">
+    <meta property="og:description" content="this is my website... do you like it? it has my info about me (you prob dont need it unless u want a cool website) it has my uh cashapp, discod and uhhhhh roblox to donate to..... also i made games in it... they are kinda buggy but please play them 🥺">
     <meta property="og:image" content="https://i.ibb.co/v4m0YvL/image-631268.png">
+    <meta property="og:type" content="website">
     <meta name="theme-color" content="#00A2FF">
 
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -19,11 +20,11 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; outline: none; }
-        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; text-align: center; }
+        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* CURSOR */
+        /* CUSTOM RETICLE CURSOR */
         #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); }
         .reticle-part { position: absolute; border: 1.5px solid #fff; width: 15px; height: 15px; }
         #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
@@ -32,35 +33,46 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* CENTERED UI */
-        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 90vw; background: rgba(0,0,0,0.95); border: 1px solid #fff; padding: 30px; z-index: 5000; flex-direction: column; align-items: center; }
+        /* UI ELEMENTS */
+        h1.title { font-size: clamp(3rem, 10vw, 6rem); letter-spacing: 12px; text-transform: uppercase; font-weight: 900; margin-bottom: 25px; text-align: center; color: #fff; text-shadow: 0 0 15px #fff; animation: white-glow 2s infinite alternate; z-index: 10; }
+        @keyframes white-glow { from { opacity: 0.8; } to { opacity: 1; text-shadow: 0 0 30px #fff; } }
         
-        .btn-style { 
-            width: 100%; max-width: 280px; padding: 12px; border: 1px solid #fff; background: none; 
-            color: #fff; letter-spacing: 2px; margin: 10px auto; transition: 0.3s; font-weight: bold;
+        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 30px; z-index: 5000; text-align: center; }
+        
+        .btn-style, .tiny-btn { 
+            width: 100%; max-width: 300px; padding: 12px; border: 1px solid #fff; background: rgba(0,0,0,0.5); 
+            color: #fff; letter-spacing: 2px; margin: 10px auto; display: block; transition: 0.3s; 
+            font-family: inherit; font-weight: bold; text-align: center; text-decoration: none;
         }
-        .btn-style:hover { background: #fff; color: #000; box-shadow: 0 0 15px #fff; }
+        .btn-style:hover, .tiny-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
 
-        input { background: #000; border: 1px solid #fff; color: #fff; padding: 12px; width: 100%; max-width: 280px; text-align: center; margin-bottom: 10px; }
+        #btn-discord { border-color: #5865F2; color: #5865F2; }
+        #btn-cashapp { border-color: #00D632; color: #00D632; }
+        #btn-robux { border-color: #00A2FF; color: #00A2FF; }
+        
+        input { background: #000; border: 1px solid #fff; color: #fff; padding: 12px; width: 100%; max-width: 300px; text-align: center; margin-bottom: 10px; font-family: inherit; }
 
-        #chat-window { display: none; position: fixed; bottom: 20px; right: 20px; width: 280px; height: 300px; background: rgba(0,0,0,0.9); border: 1px solid #fff; z-index: 1000; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.8rem; text-align: left; }
-        #chat-input { width: 100%; border: none; border-top: 1px solid #fff; padding: 10px; background: #000; color: #fff; text-align: left; }
+        /* HUD & CHAT */
+        .corner-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: none; flex-direction: column; gap: 10px; }
+        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; text-shadow: 0 0 8px #0f0; font-weight: bold; display: none; }
+        #chat-window { display: none; position: fixed; bottom: 80px; left: 20px; width: 300px; height: 350px; background: rgba(0,0,0,0.95); border: 1px solid #fff; z-index: 1000; flex-direction: column; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
+        #chat-input { width: 100%; border: none; padding: 12px; text-align: left; background: #000; color: #fff; border-top: 1px solid #333; }
 
-        #game-canvas { background: #000; border: 1px solid #fff; display: none; margin: 15px auto; }
-        #live-counter { position: fixed; top: 20px; right: 20px; color: #0f0; font-weight: bold; z-index: 2000; }
+        #game-canvas { background: #000; border: 1px solid #333; display: none; margin: 10px auto; }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
-    <div id="live-counter" style="display:none;">LIVE: 0</div>
+    <div id="live-counter">LIVE: 0 USERS</div>
+
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
-    <audio id="bg-music" loop><source src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a7315b.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style" onclick="startSystem()">INITIALIZE SYSTEM</button>
+        <div class="btn-style" style="width: auto; padding: 20px 40px;" onclick="startSystem()">ENTER SYSTEM</div>
     </div>
 
     <div id="auth-modal" class="modal-box">
@@ -70,34 +82,46 @@
         <button class="btn-style" onclick="login()">CONNECT</button>
     </div>
 
-    <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
-        <h1 style="font-size: 4rem; text-shadow: 0 0 20px #fff;">Cloudz</h1><br>
-        <button class="btn-style" onclick="document.getElementById('games-hub').style.display='flex'">GAMES</button>
-        <button class="btn-style" onclick="toggleChat()">CHAT</button>
-        <a href="https://cash.app/$roman479" target="_blank" class="btn-style" style="color:#0f0; border-color:#0f0;">CASH APP</a>
+    <div class="corner-controls" id="controls">
+        <button class="tiny-btn" onclick="document.getElementById('info-modal').style.display='block'">INFO</button>
+        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
     </div>
 
-    <div id="games-hub" class="modal-box">
-        <h2>MINIGAMES</h2>
-        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
-        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES (SHOOT)</button>
-        <button class="btn-style" onclick="launchGame('tag')">GLOBAL TAG</button>
-        <button class="btn-style" onclick="launchGame('ttt')">TTT (MULTIPLAYER)</button>
-        <button class="btn-style" onclick="this.parentElement.style.display='none'">BACK</button>
-    </div>
-
-    <div id="play-area" class="modal-box">
-        <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:5px;">
-            <span id="g-name">GAME</span><span id="g-score">0</span>
-        </div>
-        <canvas id="game-canvas" width="400" height="400" onmousedown="handleShoot(event)"></canvas>
-        <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
-        <button class="btn-style" onclick="quitGame()">QUIT</button>
+    <div id="info-modal" class="modal-box">
+        <button style="float:right; background:none; border:none; color:white; font-size:1.5rem;" onclick="this.parentElement.style.display='none'">[X]</button>
+        <h3>ABOUT CLOUDZ</h3><br>
+        <p>I code tools and make games. Use the buttons on the main screen to donate or find my discord.</p>
     </div>
 
     <div id="chat-window">
         <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder="Enter message...">
+        <input type="text" id="chat-input" placeholder="Message...">
+    </div>
+
+    <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
+        <h1 class="title">Cloudz</h1>
+        <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: hellothere.33</button>
+        <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
+        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">DONATE ROBUX</a>
+        <button class="btn-style" onclick="document.getElementById('games-hub').style.display='block'">GAMES</button>
+    </div>
+
+    <div id="games-hub" class="modal-box">
+        <h2>GAMES</h2>
+        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES (SHOOT)</button>
+        <button class="btn-style" onclick="launchGame('tag')">GLOBAL TAG</button>
+        <button class="btn-style" onclick="launchGame('ttt')">TTT</button>
+        <button class="btn-style" onclick="this.parentElement.style.display='none'">BACK</button>
+    </div>
+
+    <div id="play-area" class="modal-box">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span id="g-name">GAME</span><span id="g-score">0</span>
+        </div>
+        <canvas id="game-canvas" width="400" height="400" onmousedown="handleShoot(event)"></canvas>
+        <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
+        <button class="btn-style" onclick="quitGame()">EXIT</button>
     </div>
 
     <script>
@@ -111,49 +135,56 @@
         const cur = document.getElementById('cursor-wrapper');
 
         window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
-        window.addEventListener('keydown', e => keys[e.code] = true);
-        window.addEventListener('keyup', e => keys[e.code] = false);
+        window.addEventListener('keydown', e => { keys[e.code] = true; });
+        window.addEventListener('keyup', e => { keys[e.code] = false; });
 
         function startSystem() {
             document.getElementById('intro-overlay').style.display='none';
-            document.getElementById('auth-modal').style.display='flex';
-            document.getElementById('bg-music').play();
-            particlesJS("particles-js", { "particles": { "number": { "value": 100 }, "line_linked": { "enable": true, "opacity": 0.2 }, "move": { "speed": 1 } } });
+            document.getElementById('auth-modal').style.display='block';
+            document.getElementById('bg-music').play().catch(()=>{});
+            particlesJS("particles-js", { "particles": { "number": { "value": 120 }, "line_linked": { "enable": true, "opacity": 0.2 }, "move": { "speed": 0.8 } } });
         }
 
         function login() {
             myName = document.getElementById('username').value.trim() || "Guest";
             document.getElementById('auth-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
+            document.getElementById('controls').style.display='flex';
             
             db.ref('online/' + myName).set(true);
             db.ref('online/' + myName).onDisconnect().remove();
             db.ref('online').on('value', s => {
                 document.getElementById('live-counter').style.display = 'block';
-                document.getElementById('live-counter').innerText = `LIVE: ${s.numChildren()}`;
+                document.getElementById('live-counter').innerText = `LIVE: ${s.numChildren()} USERS`;
             });
 
             db.ref('chat').limitToLast(15).on('child_added', s => {
-                document.getElementById('chat-history').innerHTML += `<div><b>${s.val().u}:</b> ${s.val().t}</div>`;
-                document.getElementById('chat-history').scrollTop = 9999;
+                const h = document.getElementById('chat-history');
+                h.innerHTML += `<div><b style="color:#0f0">${s.val().u}:</b> ${s.val().t}</div>`;
+                h.scrollTop = h.scrollHeight;
             });
         }
 
         function toggleChat() { let c = document.getElementById('chat-window'); c.style.display = (c.style.display === 'flex' ? 'none' : 'flex'); }
         document.getElementById('chat-input').onkeydown = e => { if(e.key === 'Enter' && e.target.value.trim()){ db.ref('chat').push({u: myName, t: e.target.value}); e.target.value = ""; } };
 
+        function copyDiscord() { navigator.clipboard.writeText("hellothere.33"); document.getElementById('btn-discord').innerText = "COPIED"; setTimeout(()=>document.getElementById('btn-discord').innerText="DISCORD: hellothere.33", 2000); }
+
+        // SHOOTING LOGIC
         function handleShoot(e) {
             if(currentType === 'zombies' && active) {
                 let rect = canvas.getBoundingClientRect();
-                let angle = Math.atan2((e.clientY - rect.top) - pY, (e.clientX - rect.left) - pX);
-                bullets.push({x: pX, y: pY, dx: Math.cos(angle)*7, dy: Math.sin(angle)*7});
+                let targetX = e.clientX - rect.left;
+                let targetY = e.clientY - rect.top;
+                let angle = Math.atan2(targetY - pY, targetX - pX);
+                bullets.push({ x: pX, y: pY, dx: Math.cos(angle) * 7, dy: Math.sin(angle) * 7 });
             }
         }
 
         function launchGame(t) {
             currentType = t; active = true; score = 0;
             document.getElementById('games-hub').style.display='none';
-            document.getElementById('play-area').style.display='flex';
+            document.getElementById('play-area').style.display='block';
             canvas.style.display = 'block';
             if(gameLoop) clearInterval(gameLoop);
             if(t==='snake') { snake=[{x:10,y:10}]; sDir='R'; food={x:15,y:10}; gameLoop=setInterval(doSnake, 100); }
@@ -162,35 +193,52 @@
         }
 
         function doSnake() {
-            if(keys['KeyW'] && sDir!=='D') sDir='U'; if(keys['KeyS'] && sDir!=='U') sDir='D';
-            if(keys['KeyA'] && sDir!=='R') sDir='L'; if(keys['KeyD'] && sDir!=='L') sDir='R';
+            if((keys['KeyW'] || keys['ArrowUp']) && sDir!=='D') sDir='U';
+            if((keys['KeyS'] || keys['ArrowDown']) && sDir!=='U') sDir='D';
+            if((keys['KeyA'] || keys['ArrowLeft']) && sDir!=='R') sDir='L';
+            if((keys['KeyD'] || keys['ArrowRight']) && sDir!=='L') sDir='R';
             let head = {...snake[0]};
             if(sDir==='U') head.y--; if(sDir==='D') head.y++; if(sDir==='L') head.x--; if(sDir==='R') head.x++;
             if(head.x<0||head.x>=20||head.y<0||head.y>=20) return end();
             snake.unshift(head);
-            if(head.x===food.x && head.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; document.getElementById('g-score').innerText = score; } else snake.pop();
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18)); ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
+            if(head.x===food.x && head.y===food.y) {
+                score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+                document.getElementById('g-score').innerText = score;
+            } else snake.pop();
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
+            ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
         }
 
         function doZoms() {
             if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
-            if(Math.random()<0.02) zoms.push({x:Math.random()*400, y:Math.random()*400, h:100});
+            if(Math.random()<0.02) zoms.push({x:Math.random()*400, y:Math.random()*400});
             ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
             ctx.fillStyle="#00f"; ctx.fillRect(pX-10,pY-10,20,20);
-            bullets.forEach((b,i)=>{ b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x,b.y,4,4); });
+            bullets.forEach((b,i)=>{ 
+                b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,4,4);
+                if(b.x<0||b.x>400||b.y<0||b.y>400) bullets.splice(i,1);
+            });
             zoms.forEach((z,zi)=>{
-                let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d; z.y+=(pY-z.y)/d;
+                let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*1.5; z.y+=(pY-z.y)/d*1.5;
                 ctx.fillStyle="#f00"; ctx.fillRect(z.x-10,z.y-10,20,20);
                 if(d<15) end();
-                bullets.forEach((b,bi)=>{ if(Math.hypot(b.x-z.x,b.y-z.y)<15){ zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-score').innerText=score; }});
+                bullets.forEach((b,bi)=>{
+                    if(Math.hypot(b.x-z.x, b.y-z.y)<15){ zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-score').innerText=score; }
+                });
             });
         }
 
         function doMulti() {
             if(keys['KeyW']) pY-=4; if(keys['KeyS']) pY+=4; if(keys['KeyA']) pX-=4; if(keys['KeyD']) pX+=4;
-            db.ref('pos/'+myName).set({x:pX, y:pY, role: currentType==='ttt'?'Innocent':'Player'});
+            db.ref('pos/'+myName).set({x:pX, y:pY, role: currentType==='ttt' ? 'Innocent' : 'Player'});
             ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
-            Object.values(tagPlayers).forEach(p => { ctx.fillStyle="white"; ctx.fillRect(p.x-10,p.y-10,20,20); });
+            Object.keys(tagPlayers).forEach(id => {
+                let p = tagPlayers[id];
+                ctx.fillStyle = (currentType === 'ttt' && id === myName) ? "cyan" : "white";
+                ctx.fillRect(p.x-10,p.y-10,20,20);
+                ctx.font = "10px monospace"; ctx.fillText(id, p.x-10, p.y-15);
+            });
         }
 
         function end() { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; }
