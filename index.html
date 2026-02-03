@@ -11,15 +11,13 @@
     <meta name="theme-color" content="#ffffff">
 
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="manifest" href="site.webmanifest">
-
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; outline: none; }
-        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
@@ -34,70 +32,42 @@
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
         /* UI SYSTEM */
-        h1.title { font-size: 5rem; letter-spacing: 20px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.5); z-index: 10; }
+        h1.title { font-size: clamp(3rem, 10vw, 5rem); letter-spacing: 20px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.5); z-index: 10; }
         .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; max-width: 90vw; background: rgba(0,0,0,0.95); border: 1px solid #444; padding: 40px; z-index: 5000; text-align: center; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,1); }
         
-        .btn-style, .tiny-btn { width: 100%; max-width: 300px; padding: 14px; border: 1px solid #fff; background: transparent; color: #fff; letter-spacing: 3px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-family: inherit; font-weight: 600; text-decoration: none; font-size: 0.8rem; }
-        .btn-style:hover { background: #fff; color: #000; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.3); }
+        .btn-style, .tiny-btn { width: 100%; max-width: 300px; padding: 14px; border: 1px solid #fff; background: transparent; color: #fff; letter-spacing: 3px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.2s; font-family: inherit; font-weight: 600; text-decoration: none; font-size: 0.8rem; }
+        .btn-style:hover { background: #fff; color: #000; transform: translateY(-2px); }
 
         #btn-discord { border-color: #5865F2; color: #5865F2; } #btn-discord:hover { background: #5865F2; color: #fff; }
         #btn-cashapp { border-color: #00D632; color: #00D632; } #btn-cashapp:hover { background: #00D632; color: #fff; }
         #btn-robux { border-color: #00A2FF; color: #00A2FF; } #btn-robux:hover { background: #00A2FF; color: #fff; }
 
         .corner-controls { position: fixed; top: 30px; left: 30px; z-index: 1000; display: none; flex-direction: column; gap: 15px; }
-        #live-counter { position: fixed; top: 30px; right: 30px; font-size: 0.8rem; color: #0f0; z-index: 2000; letter-spacing: 2px; display: none; }
         
-        #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 300px; height: 400px; background: rgba(0,0,0,0.9); border: 1px solid #333; z-index: 1000; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; scrollbar-width: none; }
-        #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #333; font-family: inherit; }
+        /* TAG ARENA UI */
+        #tag-container { display: none; flex-direction: column; align-items: center; z-index: 4000; position: fixed; inset: 0; background: #000; padding: 20px; }
+        #tag-canvas { background: #080808; border: 1px solid #333; }
+        #tag-header { margin-bottom: 10px; font-size: 0.9rem; letter-spacing: 3px; font-weight: bold; }
 
-        /* GAME STYLES */
-        canvas { background: #000; border: 1px solid #333; display: none; margin: 20px auto; }
-        .ttt-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 240px; margin: 20px auto; }
-        .ttt-cell { width: 75px; height: 75px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-size: 2rem; transition: 0.2s; }
-        .ttt-cell:hover { background: #111; }
+        #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 300px; height: 400px; background: rgba(0,0,0,0.9); border: 1px solid #333; z-index: 1000; flex-direction: column; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; }
+        #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #333; font-family: inherit; }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
-    <div id="live-counter">SYSTEM_ACTIVE: 1</div>
-    <div id="cursor-wrapper">
-        <div class="reticle-part" id="reticle-top-left"></div>
-        <div class="reticle-part" id="reticle-top-right"></div>
-        <div class="reticle-part" id="reticle-bottom-left"></div>
-        <div class="reticle-part" id="reticle-bottom-right"></div>
-        <div id="cursor-dot"></div>
-    </div>
+    <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style" style="width:auto; padding: 20px 60px;" onclick="initSystem()">INITIALIZE</button>
+        <button class="btn-style" style="width:auto; padding: 20px 60px;" onclick="initApp()">INITIALIZE</button>
     </div>
 
     <div id="login-modal" class="modal-box" style="display:block;">
         <h2 style="letter-spacing:5px;">USER AUTH</h2><br>
-        <input type="text" id="user-id" placeholder="USER" style="background:#111; border:1px solid #333; color:#fff; padding:12px; width:100%; margin-bottom:10px; text-align:center;">
+        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#111; border:1px solid #333; color:#fff; padding:12px; width:100%; margin-bottom:10px; text-align:center;">
         <input type="password" id="user-pw" placeholder="PASS" style="background:#111; border:1px solid #333; color:#fff; padding:12px; width:100%; margin-bottom:20px; text-align:center;">
         <button class="btn-style" onclick="handleAuth()">LOGIN / REGISTER</button>
-    </div>
-
-    <div id="info-modal" class="modal-box">
-        <h3 style="color:#888;">CLOUDZ_PROFILE</h3><br>
-        <div style="text-align:left; font-size:0.9rem; line-height:1.8;">
-            <p>Hi, I'm Cloudz. I do a lot of coding, especially with Python. I'm currently trying to learn every major language I need to know to make whatever I want.</p><br>
-            <p>See that Cash App button? If you want to support me, you can donate there or use it for business. If you want to talk business for an app or a website, DM me on discord.</p>
-        </div><br>
-        <button class="btn-style" onclick="closeModals()">CLOSE</button>
-    </div>
-
-    <div class="corner-controls" id="controls">
-        <button class="tiny-btn" onclick="openModal('info-modal')">INFO</button>
-        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
-    </div>
-
-    <div id="chat-window">
-        <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder=">> SEND MESSAGE">
     </div>
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
@@ -105,24 +75,22 @@
         <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: cloudz.cloud</button>
         <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
         <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">ROBLOX DONATE</a>
-        <button class="btn-style" onclick="openModal('games-hub')">TERMINAL GAMES</button>
+        <button class="btn-style" style="border-color: #ff0000; color: #ff0000;" onclick="toggleTagMode(true)">GLOBAL TAG ARENA</button>
     </div>
 
-    <div id="games-hub" class="modal-box">
-        <h2 style="letter-spacing:3px;">GAMES</h2>
-        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
-        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
-        <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
-        <button class="btn-style" onclick="launchGame('ttt')">TIC TAC TOE</button>
-        <button class="btn-style" onclick="closeModals()">BACK</button>
+    <div id="tag-container">
+        <div id="tag-header">GLOBAL TAG | YOU: <span id="status-text">RUNNER</span></div>
+        <canvas id="tag-canvas" width="900" height="600"></canvas>
+        <button class="btn-style" style="max-width: 150px; padding: 10px;" onclick="toggleTagMode(false)">LEAVE</button>
     </div>
 
-    <div id="play-area" class="modal-box">
-        <h3 id="g-status" style="font-size:0.8rem; color:#888;">SCORE: 0</h3>
-        <canvas id="game-canvas" width="400" height="400" onmousedown="handleClick(event)"></canvas>
-        <div id="ttt-board" class="ttt-grid"></div>
-        <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
-        <button class="btn-style" onclick="quitGame()">TERMINATE</button>
+    <div class="corner-controls" id="controls">
+        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-history"></div>
+        <input type="text" id="chat-input" placeholder=">> SEND">
     </div>
 
     <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
@@ -132,33 +100,37 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", gameLoop, score = 0, keys = {}, active = false;
-        let pX, pY, bullets=[], zoms=[], snake=[], sDir, food, dinoY, dinoV, obstacles=[];
-        const canvas = document.getElementById('game-canvas'), ctx = canvas.getContext('2d');
-        const cur = document.getElementById('cursor-wrapper');
+        let myUser = "", players = {}, itPlayer = "", keys = {};
+        const tagCanvas = document.getElementById('tag-canvas');
+        const tagCtx = tagCanvas.getContext('2d');
 
-        window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
-        window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code==='Space' && currentType==='dino') dinoV = -12; });
+        // Obstacle Data
+        const obstacles = [
+            {x: 200, y: 150, w: 100, h: 20}, {x: 600, y: 150, w: 100, h: 20},
+            {x: 400, y: 250, w: 100, h: 100}, 
+            {x: 200, y: 430, w: 100, h: 20}, {x: 600, y: 430, w: 100, h: 20},
+            {x: 50, y: 280, w: 80, h: 40}, {x: 770, y: 280, w: 80, h: 40}
+        ];
+
+        window.addEventListener('mousemove', e => { 
+            const cur = document.getElementById('cursor-wrapper');
+            cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; 
+        });
+        window.addEventListener('keydown', e => keys[e.code] = true);
         window.addEventListener('keyup', e => keys[e.code] = false);
 
-        function initSystem() {
+        function initApp() {
             document.getElementById('intro-overlay').style.display='none';
             document.getElementById('bg-music').play();
-            
             particlesJS("particles-js", {
                 "particles": {
-                    "number": { "value": 160, "density": { "enable": true, "value_area": 800 } },
-                    "shape": { "type": "circle" },
+                    "number": { "value": 150, "density": { "enable": true, "value_area": 800 } },
                     "opacity": { "value": 1 },
-                    "size": { "value": 2.5 }, // BOLD STARS
+                    "size": { "value": 3 }, // BOLD STARS
                     "line_linked": { 
-                        "enable": true, 
-                        "distance": 130, 
-                        "color": "#ffffff", 
-                        "opacity": 0.4, 
-                        "width": 1.5 // SEMI BOLD LINES
+                        "enable": true, "distance": 140, "color": "#ffffff", "opacity": 0.5, "width": 1.8 // SEMI BOLD LINES
                     },
-                    "move": { "enable": true, "speed": 0.8, "random": true }
+                    "move": { "enable": true, "speed": 0.8 }
                 }
             });
         }
@@ -166,12 +138,11 @@
         async function handleAuth() {
             const u = document.getElementById('user-id').value.trim();
             const p = document.getElementById('user-pw').value.trim();
-            if(!u || !p) return alert("ENTER CREDENTIALS");
-
-            const snapshot = await db.ref('users/' + u).once('value');
-            if(snapshot.exists()) {
-                if(snapshot.val().pw === p) loginSuccess(u);
-                else alert("INVALID PASSWORD");
+            if(!u || !p) return alert("REQUIRED");
+            const snap = await db.ref('users/' + u).once('value');
+            if(snap.exists()) {
+                if(snap.val().pw === p) loginSuccess(u);
+                else alert("FAILED");
             } else {
                 await db.ref('users/' + u).set({pw: p});
                 loginSuccess(u);
@@ -183,13 +154,88 @@
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
             document.getElementById('controls').style.display='flex';
-            document.getElementById('live-counter').style.display='block';
             
             db.ref('chat').limitToLast(15).on('child_added', s => {
                 const h = document.getElementById('chat-history');
-                h.innerHTML += `<div><span style="color:#555;">[${s.val().u}]</span> ${s.val().t}</div>`;
+                h.innerHTML += `<div><span style="color:#666;">[${s.val().u}]</span>: ${s.val().t}</div>`;
                 h.scrollTop = h.scrollHeight;
             });
+
+            db.ref('globalTag/it').on('value', s => { itPlayer = s.val(); });
+            db.ref('globalTag/players').on('value', s => { players = s.val() || {}; });
+        }
+
+        function toggleTagMode(active) {
+            document.getElementById('tag-container').style.display = active ? 'flex' : 'none';
+            document.getElementById('main-content').style.display = active ? 'none' : 'flex';
+            if(active) {
+                db.ref('globalTag/players/' + myUser).set({ x: 100, y: 100 });
+                db.ref('globalTag/it').transaction(cur => cur || myUser);
+                requestAnimationFrame(gameLoop);
+            } else {
+                db.ref('globalTag/players/' + myUser).remove();
+            }
+        }
+
+        function gameLoop() {
+            if (document.getElementById('tag-container').style.display === 'none') return;
+
+            let me = players[myUser] || {x: 100, y: 100};
+            let oldX = me.x, oldY = me.y;
+            let speed = 5;
+
+            if(keys['KeyW']) me.y -= speed;
+            if(keys['KeyS']) me.y += speed;
+            if(keys['KeyA']) me.x -= speed;
+            if(keys['KeyD']) me.x += speed;
+
+            // Border & Obstacle Collision
+            if(me.x < 15) me.x = 15; if(me.x > 885) me.x = 885;
+            if(me.y < 15) me.y = 15; if(me.y > 585) me.y = 585;
+
+            obstacles.forEach(o => {
+                if(me.x + 15 > o.x && me.x - 15 < o.x + o.w && me.y + 15 > o.y && me.y - 15 < o.y + o.h) {
+                    me.x = oldX; me.y = oldY;
+                }
+            });
+
+            if(me.x !== oldX || me.y !== oldY) db.ref('globalTag/players/' + myUser).set(me);
+
+            // Tagger Logic
+            if(itPlayer === myUser) {
+                document.getElementById('status-text').innerText = "IT (TAG SOMEONE!)";
+                document.getElementById('status-text').style.color = "red";
+                for(let id in players) {
+                    if(id !== myUser) {
+                        let other = players[id];
+                        if(Math.hypot(me.x - other.x, me.y - other.y) < 30) {
+                            db.ref('globalTag/it').set(id);
+                            db.ref('chat').push({u: "INFO", t: `${myUser} TAGGED ${id}!`});
+                        }
+                    }
+                }
+            } else {
+                document.getElementById('status-text').innerText = "RUNNER";
+                document.getElementById('status-text').style.color = "white";
+            }
+
+            // Rendering
+            tagCtx.clearRect(0,0,900,600);
+            
+            // Draw Obstacles
+            tagCtx.fillStyle = "#222";
+            obstacles.forEach(o => tagCtx.fillRect(o.x, o.y, o.w, o.h));
+
+            // Draw Players
+            for(let id in players) {
+                let p = players[id];
+                tagCtx.fillStyle = (id === itPlayer) ? "#f00" : "#fff";
+                tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
+                tagCtx.fillStyle = "#888";
+                tagCtx.font = "10px Segoe UI";
+                tagCtx.fillText(id, p.x - 15, p.y - 22);
+            }
+            requestAnimationFrame(gameLoop);
         }
 
         function toggleChat() { 
@@ -204,111 +250,7 @@
             }
         };
 
-        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'block'; }
-        function closeModals() { 
-            const modals = ['info-modal', 'games-hub', 'play-area'];
-            modals.forEach(m => document.getElementById(m).style.display = 'none');
-        }
-
-        // --- GAME LOGIC ---
-        let currentType = "";
-        function launchGame(t) {
-            currentType = t; active = true; score = 0;
-            openModal('play-area');
-            document.getElementById('retry-btn').style.display = 'none';
-            canvas.style.display = t === 'ttt' ? 'none' : 'block';
-            document.getElementById('ttt-board').style.display = t === 'ttt' ? 'grid' : 'none';
-            if(gameLoop) clearInterval(gameLoop);
-
-            if(t==='snake') { snake=[{x:10,y:10}]; sDir='R'; food={x:15,y:10}; gameLoop=setInterval(doSnake, 100); }
-            if(t==='zombies') { pX=200; pY=200; zoms=[]; bullets=[]; gameLoop=setInterval(doZoms, 20); }
-            if(t==='dino') { dinoY=350; dinoV=0; obstacles=[]; gameLoop=setInterval(doDino, 20); }
-            if(t==='ttt') startTTT();
-        }
-
-        function handleClick(e) {
-            if(currentType === 'zombies' && active) {
-                const rect = canvas.getBoundingClientRect();
-                const angle = Math.atan2((e.clientY - rect.top) - pY, (e.clientX - rect.left) - pX);
-                bullets.push({x: pX, y: pY, dx: Math.cos(angle)*7, dy: Math.sin(angle)*7});
-            }
-        }
-
-        function doZoms() {
-            if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
-            if(Math.random()<0.04) zoms.push({x: Math.random()*400, y: Math.random()<0.5?0:400});
-            ctx.clearRect(0,0,400,400);
-            ctx.fillStyle="#00A2FF"; ctx.fillRect(pX-10,pY-10,20,20);
-            bullets.forEach((b,i) => {
-                b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,4,4);
-                zoms.forEach((z,zi) => {
-                    if(Math.hypot(b.x-z.x, b.y-z.y)<15) { zoms.splice(zi,1); bullets.splice(i,1); score++; updateScore(); }
-                });
-            });
-            zoms.forEach(z => {
-                let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*1.5; z.y+=(pY-z.y)/d*1.5;
-                ctx.fillStyle="#f00"; ctx.fillRect(z.x-10,z.y-10,20,20);
-                if(d<15) gameOver();
-            });
-        }
-
-        function doSnake() {
-            if(keys['ArrowUp'] && sDir!=='D') sDir='U'; if(keys['ArrowDown'] && sDir!=='U') sDir='D';
-            if(keys['ArrowLeft'] && sDir!=='R') sDir='L'; if(keys['ArrowRight'] && sDir!=='L') sDir='R';
-            let h = {...snake[0]};
-            if(sDir==='U') h.y--; if(sDir==='D') h.y++; if(sDir==='L') h.x--; if(sDir==='R') h.x++;
-            if(h.x<0||h.x>=20||h.y<0||h.y>=20) return gameOver();
-            snake.unshift(h);
-            if(h.x===food.x && h.y===food.y) { score++; updateScore(); food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; } else snake.pop();
-            ctx.clearRect(0,0,400,400); ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
-            ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
-        }
-
-        function doDino() {
-            dinoV += 0.8; dinoY += dinoV; if(dinoY > 350) { dinoY = 350; dinoV = 0; }
-            if(Math.random() < 0.02) obstacles.push({x: 400, w: 20, h: 40});
-            ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(50, dinoY-40, 30, 40);
-            obstacles.forEach((o, i) => {
-                o.x -= 7; ctx.fillStyle="#f00"; ctx.fillRect(o.x, 400-o.h, o.w, o.h);
-                if(o.x < 80 && o.x > 20 && dinoY > 320) gameOver();
-                if(o.x < -20) { obstacles.splice(i,1); score++; updateScore(); }
-            });
-        }
-
-        let tttBoard = ["","","","","","","","",""];
-        function startTTT() {
-            tttBoard = ["","","","","","","","",""]; active=true;
-            const grid = document.getElementById('ttt-board'); grid.innerHTML = '';
-            for(let i=0; i<9; i++) {
-                let c = document.createElement('div'); c.className = 'ttt-cell';
-                c.onclick = () => { if(tttBoard[i]==="" && active) { tttBoard[i]="X"; c.innerText="X"; if(!checkTTT()) botMove(); } };
-                grid.appendChild(c);
-            }
-        }
-        function botMove() {
-            let available = tttBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-            if(available.length > 0) {
-                let move = available[Math.floor(Math.random()*available.length)];
-                tttBoard[move] = "O"; document.getElementById('ttt-board').children[move].innerText = "O"; checkTTT();
-            }
-        }
-        function checkTTT() {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of wins) {
-                if(tttBoard[w[0]] && tttBoard[w[0]]===tttBoard[w[1]] && tttBoard[w[0]]===tttBoard[w[2]]) {
-                    active=false; document.getElementById('g-status').innerText = tttBoard[w[0]] + " WINS";
-                    document.getElementById('retry-btn').style.display='block'; return true;
-                }
-            }
-            if(!tttBoard.includes("")) { active=false; document.getElementById('g-status').innerText = "TIE"; document.getElementById('retry-btn').style.display='block'; return true; }
-            return false;
-        }
-
-        function updateScore() { document.getElementById('g-status').innerText = "SCORE: " + score; }
-        function gameOver() { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; }
-        function retryGame() { launchGame(currentType); }
-        function quitGame() { clearInterval(gameLoop); active=false; closeModals(); document.getElementById('main-content').style.display='flex'; }
-        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("DISCORD COPIED"); }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("COPIED"); }
     </script>
 </body>
 </html>
