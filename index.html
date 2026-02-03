@@ -33,7 +33,6 @@
         .btn-style { width: 100%; max-width: 400px; padding: 18px; border: 2px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 12px auto; display: flex; justify-content: center; align-items: center; transition: 0.1s; font-weight: bold; text-decoration: none; font-size: 1rem; text-transform: uppercase; }
         .btn-style:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-        /* SPECIFIC COLORS */
         .c-blurple { border-color: #5865F2; color: #5865F2; }
         .c-green { border-color: #00D632; color: #00D632; }
         .c-blue { border-color: #00A2FF; color: #00A2FF; }
@@ -130,14 +129,10 @@
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
         
-        // Obstacles placed away from the center (500, 325)
         const obstacles = [
-            {x: 200, y: 150, w: 200, h: 20}, 
-            {x: 600, y: 150, w: 200, h: 20}, 
-            {x: 200, y: 480, w: 200, h: 20}, 
-            {x: 600, y: 480, w: 200, h: 20},
-            {x: 480, y: 50, w: 40, h: 100},
-            {x: 480, y: 500, w: 40, h: 100}
+            {x: 200, y: 150, w: 200, h: 20}, {x: 600, y: 150, w: 200, h: 20}, 
+            {x: 200, y: 480, w: 200, h: 20}, {x: 600, y: 480, w: 200, h: 20},
+            {x: 480, y: 50, w: 40, h: 100}, {x: 480, y: 500, w: 40, h: 100}
         ];
 
         window.addEventListener('mousemove', e => { 
@@ -187,6 +182,10 @@
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
             document.getElementById('controls').style.display='block';
+            
+            // DISCONNECT LOGIC: If they leave the site, they vanish from the map
+            db.ref('globalTag/players/' + myUser).onDisconnect().remove();
+
             db.ref('chat').limitToLast(20).on('child_added', s => {
                 const h = document.getElementById('chat-history');
                 h.innerHTML += `<div><span style="color:#aaa;">${s.val().u}:</span> ${s.val().t}</div>`;
@@ -201,7 +200,6 @@
             document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
             document.getElementById('main-content').style.display = on ? 'none' : 'flex';
             if(on) {
-                // SPAWN IN MIDDLE
                 db.ref('globalTag/players/' + myUser).set({ x: 500, y: 325 });
                 db.ref('globalTag/it').transaction(c => c || myUser);
                 requestAnimationFrame(tagLoop);
@@ -223,10 +221,8 @@
                 if(keys['KeyD']) nextX += speed;
             }
 
-            // Boundary + Obstacle Checks
             let collision = false;
             if(nextX < 15 || nextX > 985 || nextY < 15 || nextY > 635) collision = true;
-            
             obstacles.forEach(o => {
                 if(nextX + 15 > o.x && nextX - 15 < o.x + o.w && nextY + 15 > o.y && nextY - 15 < o.y + o.h) {
                     collision = true;
@@ -238,7 +234,8 @@
             }
 
             if(itPlayer === myUser) {
-                document.getElementById('tag-status').innerText = "IT"; document.getElementById('tag-status').style.color = "red";
+                document.getElementById('tag-status').innerText = "IT"; 
+                document.getElementById('tag-status').style.color = "red";
                 for(let id in players) {
                     if(id !== myUser && Math.hypot(nextX - players[id].x, nextY - players[id].y) < 30) {
                         db.ref('globalTag/it').set(id);
