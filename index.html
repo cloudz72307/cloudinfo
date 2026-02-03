@@ -27,30 +27,29 @@
 
         h1.title { font-size: 120px; letter-spacing: 40px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 30px #fff; z-index: 10; }
         
-        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 40px; z-index: 5000; text-align: center; }
+        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.95); border: 2px solid #fff; padding: 40px; z-index: 5000; text-align: center; }
         
         .btn-style { width: 100%; max-width: 400px; padding: 18px; border: 2px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 12px auto; display: flex; justify-content: center; align-items: center; transition: 0.1s; font-weight: bold; text-decoration: none; font-size: 1rem; text-transform: uppercase; }
-        .btn-style:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn-style:hover { background: #fff; color: #000; }
 
         .c-blurple { border-color: #5865F2; color: #5865F2; }
         .c-green { border-color: #00D632; color: #00D632; }
         .c-blue { border-color: #00A2FF; color: #00A2FF; }
-        .c-white { border-color: #ffffff; color: #ffffff; }
 
         /* TAG ARENA */
-        #tag-container { display: none; flex-direction: column; align-items: center; z-index: 4000; position: fixed; inset: 0; background: #000; padding: 10px; }
-        #tag-canvas { background: #050505; border: 2px solid #fff; }
-        
-        /* NEW CLOSE BUTTON FOR TAG */
-        .tag-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; border: 2px solid #fff; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 5005; }
-        .tag-close:hover { background: #fff; color: #000; }
+        #tag-container { display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; position: fixed; inset: 0; background: #000; }
+        #tag-canvas { background: #050505; border: 4px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .tag-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; border: 2px solid #fff; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
 
-        #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 320px; height: 450px; background: #000; border: 1px solid #fff; z-index: 1000; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.75rem; text-align: left; color: #fff; font-family: 'Courier New', monospace; }
+        /* CHAT */
+        .corner-controls { position: fixed; top: 30px; left: 30px; z-index: 6000; }
+        .tiny-btn { padding: 10px 20px; background: #000; border: 1px solid #fff; color: #fff; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 5px; display: block; }
+        
+        #chat-window { display: none; position: fixed; bottom: 30px; left: 30px; width: 320px; height: 400px; background: rgba(0,0,0,0.9); border: 1px solid #fff; z-index: 5500; flex-direction: column; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; font-family: monospace; }
         #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #fff; }
 
-        canvas#game-canvas { background: #000; border: 1px solid #fff; display: none; margin: 20px auto; }
-        .info-text { text-align: left; font-size: 0.9rem; font-family: 'Courier New', monospace; line-height: 1.6; }
+        canvas#game-canvas { background: #000; border: 2px solid #fff; display: none; margin: 20px auto; }
     </style>
 </head>
 <body>
@@ -59,14 +58,14 @@
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style c-white" onclick="initApp()">ENTER CLOUDZ</button>
+        <button class="btn-style" onclick="initApp()">ENTER CLOUDZ</button>
     </div>
 
     <div id="login-modal" class="modal-box" style="display:block;">
         <h2 style="letter-spacing:10px;">ACCESS</h2><br>
-        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center;">
-        <input type="password" id="user-pw" placeholder="PASS" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin:10px 0; text-align:center;">
-        <button class="btn-style c-white" onclick="handleAuth()">LOGIN</button>
+        <input type="text" id="user-id" placeholder="USERNAME" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center;">
+        <input type="password" id="user-pw" placeholder="PASSWORD" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin:15px 0; text-align:center;">
+        <button class="btn-style" onclick="handleAuth()">LOGIN</button>
     </div>
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
@@ -74,33 +73,50 @@
         <button class="btn-style c-blurple" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
         <a href="https://cash.app/$roman479" target="_blank" class="btn-style c-green">CASHAPP</a>
         <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" class="btn-style c-blue">ROBLOX DONATE</a>
-        <button class="btn-style c-white" onclick="openModal('games-hub')">GAMES</button>
-        <button class="btn-style c-white" style="border:1px solid #444; width: 100px; font-size: 0.6rem;" onclick="openModal('info-modal')">INFO</button>
+        <button class="btn-style" onclick="openModal('games-hub')">GAMES</button>
+        <button id="admin-btn" class="btn-style" style="display:none; border-color: red; color: red;" onclick="openModal('admin-panel')">ADMIN PANEL</button>
+        <button class="btn-style" style="width: 120px; font-size: 0.6rem;" onclick="openModal('info-modal')">INFO</button>
     </div>
 
-    <div id="tag-container">
-        <div class="tag-close" onclick="toggleTagMode(false)">×</div>
-        <div style="letter-spacing:5px; margin-bottom:5px; font-weight:bold;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></div>
-        <canvas id="tag-canvas" width="1000" height="650"></canvas>
+    <div id="admin-panel" class="modal-box">
+        <h2 style="color: red;">ADMIN CONTROL</h2><br>
+        <button class="btn-style" onclick="wipeArena()">WIPE TAG ARENA</button>
+        <button class="btn-style" onclick="closeModals()">CLOSE</button>
     </div>
 
     <div id="games-hub" class="modal-box">
         <h2 style="letter-spacing:5px;">GAMES</h2>
-        <button class="btn-style c-white" style="border-color:#f00; color:#f00;" onclick="toggleTagMode(true)">GLOBAL TAG</button>
-        <button class="btn-style c-white" onclick="launchGame('snake')">SNAKE</button>
-        <button class="btn-style c-white" onclick="launchGame('zombies')">ZOMBIES</button>
-        <button class="btn-style c-white" onclick="closeModals()">BACK</button>
+        <button class="btn-style" style="border-color:#f00; color:#f00;" onclick="toggleTagMode(true)">GLOBAL TAG</button>
+        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
+        <button class="btn-style" onclick="closeModals()">BACK</button>
+    </div>
+
+    <div id="tag-container">
+        <div class="tag-close" onclick="toggleTagMode(false)">×</div>
+        <h2 style="margin-bottom: 10px; letter-spacing: 5px;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></h2>
+        <canvas id="tag-canvas" width="1000" height="600"></canvas>
     </div>
 
     <div id="play-area" class="modal-box">
         <h3 id="g-status">SCORE: 0</h3>
         <canvas id="game-canvas" width="400" height="400"></canvas>
-        <button class="btn-style c-white" onclick="closeModals()">EXIT</button>
+        <button class="btn-style" onclick="closeModals()">EXIT</button>
+    </div>
+
+    <div id="info-modal" class="modal-box">
+        <h2>INFO</h2><br>
+        <p class="info-text">Coding in Python. Learning everything. Support via CashApp or Roblox. DM for business.</p><br>
+        <button class="btn-style" onclick="closeModals()">CLOSE</button>
+    </div>
+
+    <div class="corner-controls" id="controls" style="display:none;">
+        <button class="tiny-btn" onclick="toggleChat()">CHAT TOGGLE</button>
     </div>
 
     <div id="chat-window">
         <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder=">> SEND MESSAGE">
+        <input type="text" id="chat-input" placeholder="PRESS ENTER TO SEND...">
     </div>
 
     <script>
@@ -108,107 +124,108 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {}, grabbing = false;
+        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {};
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
-        const obstacles = [{x: 200, y: 150, w: 200, h: 20}, {x: 600, y: 150, w: 200, h: 20}, {x: 480, y: 50, w: 40, h: 100}];
 
-        window.addEventListener('mousemove', e => { 
-            document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
-            document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
-            if(grabbing && myUser && document.getElementById('tag-container').style.display === 'flex') {
-                const rect = tagCanvas.getBoundingClientRect();
-                db.ref('globalTag/players/' + myUser).update({ x: e.clientX - rect.left, y: e.clientY - rect.top, lastSeen: Date.now() });
-            }
-        });
-        window.addEventListener('mousedown', () => grabbing = true);
-        window.addEventListener('mouseup', () => grabbing = false);
         window.addEventListener('keydown', e => keys[e.code] = true);
         window.addEventListener('keyup', e => keys[e.code] = false);
 
         function initApp() {
             document.getElementById('intro-overlay').style.display='none';
-            particlesJS("particles-js", {"particles":{"number":{"value":140},"color":{"value":"#ffffff"},"opacity":{"value":0.4},"size":{"value":4},"line_linked":{"enable":true,"distance":160,"opacity":0.5},"move":{"enable":true,"speed":1.5}}});
+            particlesJS("particles-js", {"particles":{"number":{"value":100},"color":{"value":"#ffffff"},"opacity":{"value":0.4},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"opacity":0.4},"move":{"enable":true,"speed":1}}});
         }
 
-        async function handleAuth() {
+        function handleAuth() {
             const u = document.getElementById('user-id').value.trim().toUpperCase();
-            const p = document.getElementById('user-pw').value.trim();
-            if(u === "CLOUDZ!") isAdmin = true; // SET ADMIN PERMS
-            loginSuccess(u);
-        }
-
-        function loginSuccess(u) {
+            if(!u) return;
             myUser = u;
+            if(u === "CLOUDZ!") {
+                isAdmin = true;
+                document.getElementById('admin-btn').style.display = 'block';
+            }
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
-            document.getElementById('chat-window').style.display='flex';
-            db.ref('globalTag/players/' + myUser).onDisconnect().remove();
-            db.ref('globalTag/it').on('value', s => { itPlayer = s.val(); });
-            db.ref('globalTag/players').on('value', s => { players = s.val() || {}; });
+            document.getElementById('controls').style.display='block';
+            startChat();
+        }
+
+        function startChat() {
+            db.ref('chat').limitToLast(15).on('child_added', s => {
+                const h = document.getElementById('chat-history');
+                h.innerHTML += `<div><b style="color:#00A2FF">${s.val().u}:</b> ${s.val().t}</div>`;
+                h.scrollTop = h.scrollHeight;
+            });
+        }
+
+        document.getElementById('chat-input').onkeydown = e => {
+            if(e.key === 'Enter' && e.target.value.trim()) {
+                db.ref('chat').push({u: myUser, t: e.target.value});
+                e.target.value = "";
+            }
+        };
+
+        function toggleChat() {
+            const cw = document.getElementById('chat-window');
+            cw.style.display = (cw.style.display === 'flex') ? 'none' : 'flex';
         }
 
         function toggleTagMode(on) {
-            document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
+            closeModals();
             document.getElementById('main-content').style.display = on ? 'none' : 'flex';
+            document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
             if(on) {
-                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 325, lastSeen: Date.now() });
+                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 300, lastSeen: Date.now() });
+                db.ref('globalTag/players/' + myUser).onDisconnect().remove();
                 requestAnimationFrame(tagLoop);
-            } else { db.ref('globalTag/players/' + myUser).remove(); }
+            } else {
+                db.ref('globalTag/players/' + myUser).remove();
+            }
         }
 
         function tagLoop() {
             if (document.getElementById('tag-container').style.display === 'none') return;
-            let me = players[myUser] || {x:500, y:325};
-            let nx = me.x, ny = me.y;
-            if(!grabbing) {
-                if(keys['KeyW']) ny -= 7; if(keys['KeyS']) ny += 7;
-                if(keys['KeyA']) nx -= 7; if(keys['KeyD']) nx += 7;
-            }
-            db.ref('globalTag/players/' + myUser).update({ x: nx, y: ny, lastSeen: Date.now() });
+            db.ref('globalTag/players').once('value', s => players = s.val() || {});
+            
+            let me = players[myUser] || {x:500, y:300};
+            if(keys['KeyW']) me.y -= 5; if(keys['KeyS']) me.y += 5;
+            if(keys['KeyA']) me.x -= 5; if(keys['KeyD']) me.x += 5;
+            
+            db.ref('globalTag/players/' + myUser).update({ x: me.x, y: me.y, lastSeen: Date.now() });
 
-            tagCtx.clearRect(0,0,1000,650);
+            tagCtx.clearRect(0,0,1000,600);
             for(let id in players) {
                 let p = players[id];
-                if(Date.now() - p.lastSeen > 10000) continue;
-                tagCtx.fillStyle = (id === itPlayer) ? "#f00" : "#fff";
-                if(id === "CLOUDZ!") tagCtx.strokeStyle = "#ffd700", tagCtx.lineWidth = 3, tagCtx.strokeRect(p.x-16, p.y-16, 32, 32);
+                tagCtx.fillStyle = (id === "CLOUDZ!") ? "#ffd700" : "#fff";
                 tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
                 tagCtx.fillText(id, p.x - 15, p.y - 20);
             }
             requestAnimationFrame(tagLoop);
         }
 
-        // ADMIN WIPE COMMAND
-        window.wipeArena = function() {
-            if(isAdmin) db.ref('globalTag/players').remove();
-        };
+        function wipeArena() {
+            if(isAdmin) db.ref('globalTag/players').remove().then(() => alert("Arena Wiped"));
+        }
 
-        let gameInt;
-        function launchGame(t) {
+        function openModal(id) {
+            closeModals(); // Hide everything else first
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModals() {
+            const modals = ['games-hub', 'play-area', 'info-modal', 'admin-panel'];
+            modals.forEach(m => document.getElementById(m).style.display = 'none');
+            document.getElementById('game-canvas').style.display = 'none';
+        }
+
+        function launchGame(type) {
             openModal('play-area');
-            const cvs = document.getElementById('game-canvas'); cvs.style.display = 'block';
-            const ctx = cvs.getContext('2d');
-            if(t === 'zombies') {
-                let px=200, py=200, zoms=[];
-                gameInt = setInterval(() => {
-                    if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5;
-                    ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(px-10,py-10,20,20);
-                    if(Math.random()<0.05) zoms.push({x:Math.random()*400, y:0});
-                    zoms.forEach(z => {
-                        z.y += 2; ctx.fillStyle="#f00"; ctx.fillRect(z.x, z.y, 15, 15);
-                        if(!isAdmin && Math.hypot(px-z.x, py-z.y) < 15) { clearInterval(gameInt); alert("CAUGHT"); closeModals(); }
-                    });
-                }, 20);
-            }
+            const canvas = document.getElementById('game-canvas');
+            canvas.style.display = 'block';
+            // Simple game placeholder logic here...
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
-        function closeModals() { 
-            ['games-hub', 'play-area'].forEach(m => document.getElementById(m).style.display = 'none'); 
-            clearInterval(gameInt);
-        }
-        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("COPIED"); }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("Discord Copied"); }
     </script>
 </body>
 </html>
