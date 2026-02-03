@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <title>CLOUDZZZ!!!</title>
-    <meta property="og:title" content="CLOUDZZZ!!!">
-    <meta property="og:description" content="this is my website... do you like it? it has my info, games, and more! 🥺">
-    <meta property="og:image" content="https://i.ibb.co/v4m0YvL/image-631268.png">
-    <meta name="theme-color" content="#00A2FF">
-
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <link rel="manifest" href="./site.webmanifest">
-
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -23,15 +15,9 @@
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* SPINNING RETICLE CURSOR */
-        #cursor-wrapper { 
-            position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; 
-            transform: translate(-50%, -50%); animation: rotateCursor 3s linear infinite; 
-        }
-        @keyframes rotateCursor {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
+        /* SPINNING RETICLE */
+        #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); animation: rotateCursor 3s linear infinite; }
+        @keyframes rotateCursor { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         .reticle-part { position: absolute; border: 1.5px solid #fff; width: 15px; height: 15px; }
         #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
         #reticle-top-right { top: -12px; right: -12px; border-left: none; border-bottom: none; }
@@ -39,180 +25,133 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* UI ELEMENTS */
-        h1.title { font-size: clamp(3rem, 10vw, 6rem); letter-spacing: 12px; text-transform: uppercase; font-weight: 900; margin-bottom: 25px; text-align: center; color: #fff; text-shadow: 0 0 15px #fff; z-index: 10; }
-        
+        /* UI */
+        h1.title { font-size: clamp(3rem, 10vw, 6rem); letter-spacing: 12px; text-transform: uppercase; font-weight: 900; margin-bottom: 25px; text-align: center; text-shadow: 0 0 15px #fff; z-index: 10; }
         .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 30px; z-index: 5000; text-align: center; }
         
-        .btn-style, .tiny-btn { 
-            width: 100%; max-width: 300px; padding: 12px; border: 1px solid #fff; background: rgba(0,0,0,0.5); 
-            color: #fff; letter-spacing: 2px; margin: 10px auto; display: flex; justify-content: center; align-items: center; 
-            transition: 0.3s; font-family: inherit; font-weight: bold; text-align: center; text-decoration: none;
-        }
-        .btn-style:hover, .tiny-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
+        .btn-style, .tiny-btn { width: 100%; max-width: 300px; padding: 12px; border: 1px solid #fff; background: rgba(0,0,0,0.5); color: #fff; letter-spacing: 2px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.3s; font-family: inherit; font-weight: bold; text-decoration: none; }
+        .btn-style:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
 
-        /* BRAND COLORS */
         #btn-discord { border-color: #5865F2; color: #5865F2; }
         #btn-cashapp { border-color: #00D632; color: #00D632; }
         #btn-robux { border-color: #00A2FF; color: #00A2FF; }
 
-        input { background: #000; border: 1px solid #fff; color: #fff; padding: 12px; width: 100%; max-width: 300px; text-align: center; margin-bottom: 10px; font-family: inherit; }
-
-        /* HUD & CHAT */
         .corner-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: none; flex-direction: column; gap: 10px; }
-        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; text-shadow: 0 0 8px #0f0; font-weight: bold; display: none; }
-        #chat-window { display: none; position: fixed; bottom: 80px; left: 20px; width: 300px; height: 350px; background: rgba(0,0,0,0.95); border: 1px solid #fff; z-index: 1000; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
-        #chat-input { width: 100%; border: none; padding: 12px; text-align: left; background: #000; color: #fff; border-top: 1px solid #333; }
+        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; font-weight: bold; display: none; }
 
-        #game-canvas { background: #000; border: 1px solid #333; display: none; margin: 10px auto; }
+        /* TTT */
+        .ttt-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 240px; margin: 20px auto; }
+        .ttt-cell { width: 75px; height: 75px; border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
-    <div id="live-counter">LIVE: 0 USERS</div>
-
-    <div id="cursor-wrapper">
-        <div class="reticle-part" id="reticle-top-left"></div>
-        <div class="reticle-part" id="reticle-top-right"></div>
-        <div class="reticle-part" id="reticle-bottom-left"></div>
-        <div class="reticle-part" id="reticle-bottom-right"></div>
-        <div id="cursor-dot"></div>
-    </div>
-
-    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
+    <div id="live-counter">LIVE: 1 USERS</div>
+    <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
         <div class="btn-style" style="width: auto; padding: 20px 40px;" onclick="startSystem()">ENTER SYSTEM</div>
     </div>
 
-    <div id="auth-modal" class="modal-box">
-        <h2>LOGIN</h2><br>
-        <input type="text" id="username" placeholder="USERNAME" maxlength="12">
-        <input type="password" id="password" placeholder="PASSWORD">
-        <button class="btn-style" onclick="login()">CONNECT</button>
+    <div id="info-modal" class="modal-box">
+        <button style="float:right; background:none; border:none; color:white; font-size:1.5rem;" onclick="this.parentElement.style.display='none'">[X]</button>
+        <h3>ABOUT CLOUDZ</h3><br>
+        <p>this is my website... do you like it? it has my info, games, and more! 🥺</p>
     </div>
 
     <div class="corner-controls" id="controls">
         <button class="tiny-btn" onclick="document.getElementById('info-modal').style.display='block'">INFO</button>
-        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
-    </div>
-
-    <div id="info-modal" class="modal-box">
-        <button style="float:right; background:none; border:none; color:white; font-size:1.5rem;" onclick="this.parentElement.style.display='none'">[X]</button>
-        <h3>ABOUT CLOUDZ</h3><br>
-        <p>I code tools and make games.</p>
-    </div>
-
-    <div id="chat-window">
-        <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder="Message...">
     </div>
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
-        
         <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: cloudz.cloud</button>
         <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
         <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">ROBLOX DONATE</a>
-        
         <button class="btn-style" onclick="document.getElementById('games-hub').style.display='block'">GAMES</button>
     </div>
 
     <div id="games-hub" class="modal-box">
         <h2>GAMES</h2>
         <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
-        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES (SHOOTER)</button>
         <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
         <button class="btn-style" onclick="launchGame('ttt')">TIC TAC TOE</button>
         <button class="btn-style" onclick="this.parentElement.style.display='none'">BACK</button>
     </div>
 
     <div id="play-area" class="modal-box">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span id="g-name">GAME</span><span id="g-score">0</span>
-        </div>
-        <canvas id="game-canvas" width="400" height="400"></canvas>
-        <div id="ttt-board" style="display:none; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 200px; margin: 0 auto;"></div>
+        <h3 id="g-status">SCORE: 0</h3>
+        <canvas id="game-canvas" width="400" height="400" onmousedown="shootZombie(event)"></canvas>
+        <div id="ttt-board" class="ttt-grid"></div>
+        <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
         <button class="btn-style" onclick="quitGame()">EXIT</button>
     </div>
 
     <script>
-        const firebaseConfig = { databaseURL: "https://cloudzinfo-1f0ec-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        let myName = "", currentType = "", gameLoop, score = 0, keys = {}, active = false;
-        let pX=200, pY=200, enemies=[], snake=[], sDir='R', food={}, dinoY=350, dinoV=0, obstacles=[];
+        let currentType = "", gameLoop, score = 0, keys = {}, active = false;
+        let pX, pY, bullets=[], zoms=[], snake=[], sDir, food, dinoY, dinoV, obstacles=[];
         const canvas = document.getElementById('game-canvas'), ctx = canvas.getContext('2d');
         const cur = document.getElementById('cursor-wrapper');
 
         window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
-        window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code==='Space' && currentType==='dino') jumpDino(); });
-        window.addEventListener('keyup', e => { keys[e.code] = false; });
+        window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code==='Space' && currentType==='dino') dinoV = -14; });
+        window.addEventListener('keyup', e => keys[e.code] = false);
 
         function startSystem() {
             document.getElementById('intro-overlay').style.display='none';
-            document.getElementById('auth-modal').style.display='block';
-            document.getElementById('bg-music').play().catch(()=>{});
-            
-            // THE "PERFECT" SCATTERED CONSTELLATION CONFIG
+            document.getElementById('main-content').style.display='flex';
+            document.getElementById('controls').style.display='flex';
+            document.getElementById('live-counter').style.display='block';
             particlesJS("particles-js", {
                 "particles": {
                     "number": { "value": 130, "density": { "enable": true, "value_area": 1000 } },
-                    "color": { "value": "#ffffff" },
-                    "opacity": { "value": 0.8, "random": true },
-                    "size": { "value": 1.3, "random": true },
-                    "line_linked": { 
-                        "enable": true, 
-                        "distance": 150, 
-                        "color": "#ffffff", 
-                        "opacity": 0.5, 
-                        "width": 2 
-                    },
-                    "move": { "enable": true, "speed": 0.5, "random": true }
+                    "line_linked": { "enable": true, "distance": 150, "opacity": 0.5, "width": 2 },
+                    "move": { "enable": true, "speed": 0.5 }
                 },
-                "interactivity": {
-                    "events": { "onhover": { "enable": true, "mode": "grab" } },
-                    "modes": { "grab": { "distance": 200, "line_linked": { "opacity": 1 } } }
-                }
+                "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
             });
         }
-
-        function login() {
-            myName = document.getElementById('username').value.trim() || "Guest";
-            document.getElementById('auth-modal').style.display='none';
-            document.getElementById('main-content').style.display='flex';
-            document.getElementById('controls').style.display='flex';
-            db.ref('online/' + myName).set(true);
-            db.ref('online/' + myName).onDisconnect().remove();
-            db.ref('online').on('value', s => {
-                document.getElementById('live-counter').style.display = 'block';
-                document.getElementById('live-counter').innerText = `LIVE: ${s.numChildren()} USERS`;
-            });
-            db.ref('chat').limitToLast(15).on('child_added', s => {
-                document.getElementById('chat-history').innerHTML += `<div><b style="color:#0f0">${s.val().u}:</b> ${s.val().t}</div>`;
-                document.getElementById('chat-history').scrollTop = 9999;
-            });
-        }
-
-        function toggleChat() { let c = document.getElementById('chat-window'); c.style.display = (c.style.display === 'flex' ? 'none' : 'flex'); }
-        document.getElementById('chat-input').onkeydown = e => { if(e.key === 'Enter' && e.target.value.trim()){ db.ref('chat').push({u: myName, t: e.target.value}); e.target.value = ""; } };
-
-        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); document.getElementById('btn-discord').innerText = "COPIED"; setTimeout(()=>document.getElementById('btn-discord').innerText="DISCORD: cloudz.cloud", 2000); }
 
         function launchGame(t) {
             currentType = t; active = true; score = 0;
             document.getElementById('games-hub').style.display='none';
             document.getElementById('play-area').style.display='block';
+            document.getElementById('retry-btn').style.display='none';
+            document.getElementById('g-status').innerText = "SCORE: 0";
             canvas.style.display = t==='ttt'?'none':'block';
             document.getElementById('ttt-board').style.display = t==='ttt'?'grid':'none';
             if(gameLoop) clearInterval(gameLoop);
             if(t==='snake') { snake=[{x:10,y:10}]; sDir='R'; food={x:15,y:10}; gameLoop=setInterval(doSnake, 100); }
-            if(t==='zombies') { pX=200; pY=200; enemies=[]; gameLoop=setInterval(doZoms, 20); }
+            if(t==='zombies') { pX=200; pY=200; zoms=[]; bullets=[]; gameLoop=setInterval(doZoms, 20); }
             if(t==='dino') { dinoY=350; dinoV=0; obstacles=[]; gameLoop=setInterval(doDino, 20); }
             if(t==='ttt') startTTT();
+        }
+
+        function shootZombie(e) {
+            if(currentType !== 'zombies' || !active) return;
+            const rect = canvas.getBoundingClientRect();
+            const angle = Math.atan2((e.clientY - rect.top) - pY, (e.clientX - rect.left) - pX);
+            bullets.push({ x: pX, y: pY, dx: Math.cos(angle) * 8, dy: Math.sin(angle) * 8 });
+        }
+
+        function doZoms() {
+            if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
+            if(Math.random()<0.03) zoms.push({x: Math.random()*400, y: Math.random()<0.5?0:400});
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle="#00A2FF"; ctx.fillRect(pX-10,pY-10,20,20);
+            bullets.forEach((b,bi) => {
+                b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,5,5);
+                zoms.forEach((z,zi) => {
+                    if(Math.hypot(b.x-z.x, b.y-z.y)<15) { zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-status').innerText="SCORE: "+score; }
+                });
+            });
+            zoms.forEach(z => {
+                let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*1.5; z.y+=(pY-z.y)/d*1.5;
+                ctx.fillStyle="#f00"; ctx.fillRect(z.x-10,z.y-10,20,20);
+                if(d<15) { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; }
+            });
         }
 
         function doSnake() {
@@ -222,40 +161,58 @@
             if(sDir==='U') head.y--; if(sDir==='D') head.y++; if(sDir==='L') head.x--; if(sDir==='R') head.x++;
             if(head.x<0||head.x>=20||head.y<0||head.y>=20) return quitGame();
             snake.unshift(head);
-            if(head.x===food.x && head.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; document.getElementById('g-score').innerText=score; } else snake.pop();
+            if(head.x===food.x && head.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; document.getElementById('g-status').innerText="SCORE: "+score; } else snake.pop();
             ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18)); ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
-        }
-
-        function doZoms() {
-            if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
-            if(Math.random()<0.02) enemies.push({x:Math.random()*400, y:Math.random()*400});
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#00f"; ctx.fillRect(pX-10,pY-10,20,20);
-            enemies.forEach(z=>{ let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*1.5; z.y+=(pY-z.y)/d*1.5; ctx.fillStyle="#f00"; ctx.fillRect(z.x-10,z.y-10,20,20); if(d<15) quitGame(); });
         }
 
         function doDino() {
             dinoV += 0.8; dinoY += dinoV; if(dinoY > 350) { dinoY = 350; dinoV = 0; }
             if(Math.random() < 0.015) obstacles.push({x: 400, w: 20, h: 40});
             ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(50, dinoY-40, 30, 40);
-            obstacles.forEach((o, i) => { o.x -= 6; ctx.fillStyle="#f00"; ctx.fillRect(o.x, 400-o.h, o.w, o.h); if(o.x < 80 && o.x > 20 && dinoY > 320) quitGame(); if(o.x < -20) { obstacles.splice(i,1); score++; document.getElementById('g-score').innerText=score; } });
+            obstacles.forEach((o, i) => { o.x -= 6; ctx.fillStyle="#f00"; ctx.fillRect(o.x, 400-o.h, o.w, o.h); if(o.x < 80 && o.x > 20 && dinoY > 320) { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; } if(o.x < -20) { obstacles.splice(i,1); score++; document.getElementById('g-status').innerText="SCORE: "+score; } });
         }
-        function jumpDino() { if(dinoY >= 350) dinoV = -14; }
 
-        let tttState = Array(9).fill(null);
+        let board = ["","","","","","","","",""];
         function startTTT() {
-            tttState.fill(null); const board = document.getElementById('ttt-board'); board.innerHTML = ''; board.style.display='grid';
+            board = ["","","","","","","","",""];
+            const grid = document.getElementById('ttt-board');
+            grid.innerHTML = '';
             for(let i=0; i<9; i++) {
-                let cell = document.createElement('div'); cell.style.width='60px'; cell.style.height='60px'; cell.style.border='1px solid #fff'; cell.style.display='flex'; cell.style.alignItems='center'; cell.style.justifyContent='center'; cell.style.fontSize='2rem';
-                cell.onclick = () => { if(!tttState[i]) { tttState[i]='X'; cell.innerText='X'; cpuTTT(); } };
-                board.appendChild(cell);
+                let c = document.createElement('div'); c.className = 'ttt-cell';
+                c.onclick = () => { if(board[i]==="" && active) { board[i]="X"; c.innerText="X"; checkTTT(); if(active) cpuMove(); } };
+                grid.appendChild(c);
             }
         }
-        function cpuTTT() {
-            let empty = tttState.map((v,i)=>v===null?i:null).filter(v=>v!==null);
-            if(empty.length) { let m = empty[Math.floor(Math.random()*empty.length)]; tttState[m]='O'; document.getElementById('ttt-board').children[m].innerText='O'; }
+        function cpuMove() {
+            let bestScore = -Infinity; let move;
+            for(let i=0; i<9; i++) { if(board[i]==="") { board[i]="O"; let s = minimax(board, 0, false); board[i]=""; if(s > bestScore) { bestScore = s; move = i; } } }
+            board[move] = "O"; document.getElementById('ttt-board').children[move].innerText = "O"; checkTTT();
+        }
+        function minimax(b, depth, isMax) {
+            let res = checkWin(); if(res !== null) return res === "O" ? 10 : res === "X" ? -10 : 0;
+            if(isMax) {
+                let best = -Infinity;
+                for(let i=0; i<9; i++) { if(b[i]==="") { b[i]="O"; best = Math.max(best, minimax(b, depth+1, false)); b[i]=""; } }
+                return best;
+            } else {
+                let best = Infinity;
+                for(let i=0; i<9; i++) { if(b[i]==="") { b[i]="X"; best = Math.min(best, minimax(b, depth+1, true)); b[i]=""; } }
+                return best;
+            }
+        }
+        function checkWin() {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let l of lines) { if(board[l[0]] && board[l[0]]===board[l[1]] && board[l[0]]===board[l[2]]) return board[l[0]]; }
+            return board.includes("") ? null : "tie";
+        }
+        function checkTTT() {
+            let res = checkWin();
+            if(res) { active = false; document.getElementById('g-status').innerText = res==="tie"?"TIE!":res+" WINS!"; document.getElementById('retry-btn').style.display='block'; }
         }
 
+        function retryGame() { launchGame(currentType); }
         function quitGame() { clearInterval(gameLoop); active=false; document.getElementById('play-area').style.display='none'; document.getElementById('main-content').style.display='flex'; }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); document.getElementById('btn-discord').innerText="COPIED!"; setTimeout(()=>document.getElementById('btn-discord').innerText="DISCORD: cloudz.cloud",2000); }
     </script>
 </body>
 </html>
