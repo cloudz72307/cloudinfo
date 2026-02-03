@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CLOUDZ!!!!</title>
+    <title>CLOUDZ V3.7</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; }
-        body { background: #000; color: #fff; font-family: 'Arial Black', sans-serif; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        body { background: #000; color: #fff; font-family: 'Arial Black', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         #particles-js { position: absolute; inset: 0; z-index: 1; }
         
         /* CURSOR */
@@ -16,63 +16,79 @@
         .reticle { width: 30px; height: 30px; border: 2px solid #fff; position: absolute; transform: translate(-50%, -50%); animation: rot 4s linear infinite; }
         @keyframes rot { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* MODALS & UI */
-        .modal-box { display: none; position: relative; z-index: 5000; width: 450px; padding: 40px; border: 2px solid #fff; background: rgba(0,0,0,0.95); text-align: center; }
+        /* TAG HEADER */
+        #tag-header { display: none; position: fixed; top: 0; width: 100%; background: rgba(255,0,0,0.3); padding: 15px; text-align: center; z-index: 7000; border-bottom: 2px solid #ff0000; font-weight: 900; letter-spacing: 5px; }
+
+        /* UI ALIGNMENT */
+        .modal-box { display: none; position: relative; z-index: 5000; width: 480px; padding: 40px; border: 2px solid #fff; background: rgba(0,0,0,0.95); text-align: center; box-shadow: 0 0 30px rgba(255,255,255,0.1); }
         .btn-style { width: 100%; padding: 16px; border: 2px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 10px 0; transition: 0.1s; text-transform: uppercase; font-weight: bold; }
         .btn-style:hover { background: #fff; color: #000; }
-        input { width: 100%; padding: 15px; background: #000; border: 1px solid #fff; color: #fff; margin-bottom: 10px; text-align: center; font-size: 1rem; }
-        
-        .title { font-size: 80px; letter-spacing: 20px; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 15px #fff; }
-        #debug-log { font-family: monospace; font-size: 10px; color: #ff4444; margin-top: 10px; text-transform: uppercase; }
+        .btn-blurple { border-color: #5865F2; color: #5865F2; }
+        .btn-green { border-color: #00D632; color: #00D632; }
+        .btn-blue { border-color: #00A2FF; color: #00A2FF; }
 
-        /* GAMES */
-        #game-canvas { background: #000; border: 2px solid #fff; display: block; margin: 10px auto; }
-        #g-status { letter-spacing: 3px; margin-bottom: 10px; }
+        input { width: 100%; padding: 15px; background: #000; border: 1px solid #fff; color: #fff; margin-bottom: 15px; text-align: center; font-size: 1rem; }
+        .title { font-size: 80px; letter-spacing: 20px; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 15px #fff; width: 100%; }
+
+        /* CHAT BOX */
+        #chat-ui { display: none; width: 320px; height: 400px; position: fixed; bottom: 20px; left: 20px; background: #000; border: 2px solid #fff; z-index: 8000; flex-direction: column; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 10px; font-family: monospace; font-size: 12px; text-align: left; }
+        #chat-in { width: 100%; border: none; border-top: 1px solid #fff; padding: 10px; background: #000; color: #fff; }
+
+        #game-canvas { background: #000; border: 2px solid #fff; display: block; margin: 15px auto; }
     </style>
 </head>
-<body>
+<body onclick="startAudio()">
 
 <div id="particles-js"></div>
 <div id="cursor-wrapper"><div class="reticle"></div></div>
+<div id="tag-header">IT: <span id="it-name">...</span></div>
 
 <div id="intro-screen" style="z-index:9000; position:fixed; inset:0; background:#000; display:flex; justify-content:center; align-items:center;">
-    <button class="btn-style" style="width:250px" onclick="startSystem()">ENTER CLOUDZ</button>
+    <button class="btn-style" style="width:300px" onclick="initSystem()">ENTER CLOUDZ</button>
 </div>
 
 <div id="login-modal" class="modal-box" style="display:block;">
     <h2 style="letter-spacing:10px; margin-bottom:20px;">SECURITY</h2>
-    <input type="text" id="u-name" placeholder="USERNAME">
-    <input type="password" id="u-pass" placeholder="PASSWORD">
-    <button class="btn-style" onclick="attemptLogin()">ACCESS</button>
-    <div id="debug-log">SYSTEM READY</div>
+    <input type="text" id="u-name" placeholder="DISPLAY NAME">
+    <button class="btn-style" onclick="login()">ACCESS</button>
 </div>
 
 <div id="main-menu" class="modal-box" style="border:none; background:transparent;">
     <h1 class="title">CLOUDZ</h1>
-    <button class="btn-style" style="color:#5865F2; border-color:#5865F2;">DISCORD: CLOUDZ.CLOUD</button>
+    <button class="btn-style btn-blurple" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
+    <button class="btn-style btn-green" onclick="window.open('https://cash.app/$roman479')">CASHAPP</button>
+    <button class="btn-style btn-blue" onclick="window.open('https://www.roblox.com/users/59877973/profile')">ROBLOX DONATE</button>
     <button class="btn-style" onclick="openMenu('games-hub')">GAMES</button>
-    <button class="btn-style" onclick="location.reload()">LOGOUT</button>
+    <button class="btn-style" onclick="openMenu('info-modal')">INFO</button>
+</div>
+
+<div id="info-modal" class="modal-box">
+    <h2 style="letter-spacing:5px; margin-bottom:15px;">INFO</h2>
+    <div style="font-size: 12px; line-height: 2; letter-spacing: 2px;">
+        <p>THIS IS THE OFFICIAL CLOUDZ WEBSITE V2.0.</p>
+        <p>CREATED FOR TESTING CUSTOM UI AND GAME LOGIC.</p>
+        <p>ALL SYSTEMS OPERATIONAL.</p>
+    </div>
+    <button class="btn-style" style="margin-top:20px" onclick="openMenu('main-menu')">BACK</button>
 </div>
 
 <div id="games-hub" class="modal-box">
     <button class="btn-style" onclick="play('snake')">SNAKE</button>
     <button class="btn-style" onclick="play('zombies')">ZOMBIES</button>
-    <button class="btn-style" onclick="openMenu('ttt-select')">TIC-TAC-TOE</button>
+    <button class="btn-style" onclick="play('tag')">GLOBAL TAG</button>
     <button class="btn-style" onclick="openMenu('main-menu')">BACK</button>
 </div>
 
-<div id="ttt-select" class="modal-box">
-    <button class="btn-style" onclick="play('ttt-bot')">VS BOT</button>
-    <button class="btn-style" onclick="play('ttt-friend')">LOCAL FRIEND</button>
-    <button class="btn-style" onclick="play('ttt-online')">ONLINE PVP</button>
-    <button class="btn-style" onclick="openMenu('games-hub')">BACK</button>
+<div id="play-area" class="modal-box" style="width: auto; min-width: 450px;">
+    <h3 id="g-status" style="letter-spacing:3px">READY</h3>
+    <canvas id="game-canvas" width="400" height="400"></canvas>
+    <button class="btn-style" onclick="stopGame(); openMenu('games-hub')">QUIT</button>
 </div>
 
-<div id="play-area" class="modal-box" style="width: auto;">
-    <h3 id="g-status">READY</h3>
-    <canvas id="game-canvas" width="400" height="400"></canvas>
-    <button id="retry-btn" class="btn-style" style="display:none;" onclick="play(currentG)">RETRY</button>
-    <button class="btn-style" onclick="openMenu('games-hub'); stopG();">QUIT</button>
+<div id="chat-ui">
+    <div id="chat-log"></div>
+    <input type="text" id="chat-in" placeholder="Say something...">
 </div>
 
 <audio id="bg-m" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
@@ -83,86 +99,65 @@
     const db = firebase.database();
 
     let myUser = "", currentG = "", loop, keys = {};
-    window.onkeydown = e => keys[e.code] = true;
-    window.onkeyup = e => keys[e.code] = false;
+    const cv = document.getElementById('game-canvas'), cx = cv.getContext('2d');
 
-    function startSystem() {
+    function initSystem() {
         document.getElementById('intro-screen').style.display = 'none';
-        document.getElementById('bg-m').play().catch(()=>{});
-        particlesJS("particles-js", {"particles":{"number":{"value":40},"color":{"value":"#fff"},"size":{"value":2},"move":{"speed":1}}});
+        particlesJS("particles-js", {"particles":{"number":{"value":50},"color":{"value":"#fff"},"shape":{"type":"circle"},"opacity":{"value":0.5},"size":{"value":2},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2}}});
     }
 
-    function attemptLogin() {
+    function startAudio() { document.getElementById('bg-m').play().catch(()=>{}); }
+    function openMenu(id) { document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none'); document.getElementById(id).style.display = 'block'; }
+    function copyDiscord() { navigator.clipboard.writeText("CLOUDZ.CLOUD"); }
+
+    function login() {
         const u = document.getElementById('u-name').value.trim().toUpperCase();
-        const p = document.getElementById('u-pass').value;
-        const logger = document.getElementById('debug-log');
+        if(!u) return;
+        myUser = u;
+        openMenu('main-menu');
+        document.getElementById('chat-ui').style.display = 'flex';
+        initChat();
+    }
 
-        if(!u || !p) { logger.innerText = "ERROR: FIELDS EMPTY"; return; }
-
-        logger.innerText = "SEARCHING DATABASE...";
-
-        db.ref('users/' + u).once('value').then(snap => {
-            const data = snap.val();
-            
-            if (!data) {
-                logger.innerText = `ERROR: USER "${u}" NOT FOUND`;
-                return;
-            }
-
-            // Using String() wrapper ensures '1234' matches 1234
-            if (String(data.pass) === String(p)) {
-                myUser = u;
-                openMenu('main-menu');
-            } else {
-                logger.innerText = "ERROR: WRONG PASSWORD";
-            }
-        }).catch(e => {
-            logger.innerText = "DB ERROR: CHECK FIREBASE RULES (READ=TRUE)";
+    function initChat() {
+        db.ref('chat').limitToLast(15).on('child_added', s => {
+            const d = s.val();
+            const log = document.getElementById('chat-log');
+            log.innerHTML += `<div><b>${d.u}:</b> ${d.m}</div>`;
+            log.scrollTop = log.scrollHeight;
         });
     }
 
-    function openMenu(id) {
-        document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
+    document.getElementById('chat-in').onkeydown = e => {
+        if(e.key === 'Enter' && e.target.value) {
+            db.ref('chat').push({ u: myUser, m: e.target.value });
+            e.target.value = "";
+        }
+    };
+
+    window.onkeydown = e => keys[e.code] = true;
+    window.onkeyup = e => keys[e.code] = false;
+    window.onmousemove = e => {
+        document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
+        document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
+    };
+
+    function stopGame() { 
+        clearInterval(loop); 
+        if(myUser) db.ref('tag/players/' + myUser).remove();
+        document.getElementById('tag-header').style.display = 'none';
     }
-
-    function stopG() { clearInterval(loop); }
-
-    /* --- MINI GAMES ENGINE --- */
-    const cv = document.getElementById('game-canvas'), cx = cv.getContext('2d');
 
     function play(type) {
         currentG = type;
         openMenu('play-area');
-        stopG();
-        document.getElementById('retry-btn').style.display = 'none';
+        stopGame();
         if(type === 'snake') runSnake();
         if(type === 'zombies') runZombies();
-        if(type.includes('ttt')) runTTT(type);
+        if(type === 'tag') runTag();
     }
 
-    function runZombies() {
-        let px=200, py=200, z=[], b=[], sc=0;
-        loop = setInterval(() => {
-            if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5; if(keys['KeyA']) px-=5; if(keys['KeyD']) px+=5;
-            if(keys['Space']) { b.push({x:px, y:py}); keys['Space']=false; }
-            if(Math.random() < 0.04) z.push({x:Math.random()*400, y:0});
-            cx.clearRect(0,0,400,400); cx.fillStyle="#fff"; cx.fillRect(px-10, py-10, 20, 20);
-            b.forEach((bul, i) => { 
-                bul.y -= 8; cx.fillStyle="yellow"; cx.fillRect(bul.x-2, bul.y, 4, 10);
-                if(bul.y < 0) b.splice(i,1);
-            });
-            z.forEach((zm, i) => {
-                let a = Math.atan2(py-zm.y, px-zm.x); zm.x += Math.cos(a)*2; zm.y += Math.sin(a)*2;
-                cx.fillStyle="red"; cx.fillRect(zm.x-8, zm.y-8, 16, 16);
-                b.forEach((bul, bi) => {
-                    if(Math.hypot(zm.x-bul.x, zm.y-bul.y) < 15) { z.splice(i,1); b.splice(bi,1); sc+=10; }
-                });
-                if(Math.hypot(px-zm.x, py-zm.y) < 15) { stopG(); document.getElementById('retry-btn').style.display='block'; }
-            });
-            document.getElementById('g-status').innerText = "KILLS: " + sc;
-        }, 20);
-    }
+    // --- GAME LOGIC ---
 
     function runSnake() {
         let s=[{x:10,y:10}], d={x:1,y:0}, f={x:15,y:15}, sc=0;
@@ -170,7 +165,7 @@
             if(keys['KeyW']&&d.y==0)d={x:0,y:-1}; if(keys['KeyS']&&d.y==0)d={x:0,y:1};
             if(keys['KeyA']&&d.x==0)d={x:-1,y:0}; if(keys['KeyD']&&d.x==0)d={x:1,y:0};
             let h={x:s[0].x+d.x, y:s[0].y+d.y};
-            if(h.x<0||h.x>=20||h.y<0||h.y>=20) { stopG(); document.getElementById('retry-btn').style.display='block'; return; }
+            if(h.x<0||h.x>=20||h.y<0||h.y>=20) return play('snake');
             s.unshift(h);
             if(h.x==f.x && h.y==f.y) { sc++; f={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else s.pop();
             cx.clearRect(0,0,400,400); cx.fillStyle="red"; cx.fillRect(f.x*20, f.y*20, 18, 18);
@@ -179,41 +174,62 @@
         }, 100);
     }
 
-    // TTT Setup
-    let tB = ["","","","","","","","",""], tP = "X";
-    function runTTT(m) {
-        tB = ["","","","","","","","",""]; tP = "X"; drawT();
-        if(m === 'ttt-online') db.ref('ttt').on('value', s => { const v=s.val(); if(v){tB=v.b; tP=v.p; drawT(); checkT();} });
-        cv.onclick = e => {
-            let r = cv.getBoundingClientRect(), x = Math.floor((e.clientX-r.left)/133), y = Math.floor((e.clientY-r.top)/133), i = y*3+x;
-            if(tB[i] === "") {
-                tB[i] = tP; tP = tP === "X" ? "O" : "X";
-                if(m === 'ttt-online') db.ref('ttt').set({b:tB, p:tP});
-                else { drawT(); if(!checkT() && m === 'ttt-bot') botT(); }
-            }
-        };
-    }
-    function drawT() {
-        cx.clearRect(0,0,400,400); cx.strokeStyle="#fff"; cx.lineWidth=2;
-        for(let i=1; i<3; i++) { cx.strokeRect(i*133,0,0,400); cx.strokeRect(0,i*133,400,0); }
-        cx.font="60px Arial"; cx.fillStyle="#fff";
-        tB.forEach((v,i) => { if(v) cx.fillText(v, (i%3)*133+45, Math.floor(i/3)*133+85); });
-    }
-    function checkT() {
-        const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        for(let s of w) if(tB[s[0]] && tB[s[0]]==tB[s[1]] && tB[s[0]]==tB[s[2]]) { alert(tB[s[0]]+" WINS"); play(currentG); return true; }
-        if(!tB.includes("")) { alert("DRAW"); play(currentG); return true; }
-        return false;
-    }
-    function botT() {
-        let e = tB.map((v,i) => v===""?i:null).filter(v=>v!==null);
-        if(e.length) { tB[e[Math.floor(Math.random()*e.length)]] = "O"; tP = "X"; drawT(); checkT(); }
+    function runZombies() {
+        let px=200, py=200, z=[], b=[], sc=0;
+        loop = setInterval(() => {
+            if(keys['KeyW']) py-=4; if(keys['KeyS']) py+=4; if(keys['KeyA']) px-=4; if(keys['KeyD']) px+=4;
+            if(keys['Space']) { b.push({x:px, y:py}); keys['Space']=false; }
+            if(Math.random() < 0.05) z.push({x:Math.random()*400, y:0});
+            cx.clearRect(0,0,400,400); cx.fillStyle="#fff"; cx.fillRect(px-10, py-10, 20, 20);
+            b.forEach((bul, i) => { bul.y -= 7; cx.fillStyle="yellow"; cx.fillRect(bul.x-2, bul.y, 4, 10); if(bul.y < 0) b.splice(i,1); });
+            z.forEach((zm, i) => {
+                let a = Math.atan2(py-zm.y, px-zm.x); zm.x += Math.cos(a)*2; zm.y += Math.sin(a)*2;
+                cx.fillStyle="red"; cx.fillRect(zm.x-8, zm.y-8, 16, 16);
+                b.forEach((bul, bi) => { if(Math.hypot(zm.x-bul.x, zm.y-bul.y) < 15) { z.splice(i,1); b.splice(bi,1); sc+=10; } });
+                if(Math.hypot(px-zm.x, py-zm.y) < 15) play('zombies');
+            });
+            document.getElementById('g-status').innerText = "KILLS: " + sc;
+        }, 20);
     }
 
-    window.onmousemove = e => {
-        document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
-        document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
-    };
+    function runTag() {
+        document.getElementById('tag-header').style.display = 'block';
+        let px=200, py=200, others={}, currentIt="", tagCooldown = 0;
+        
+        db.ref('tag/it').on('value', s => { 
+            currentIt = s.val(); 
+            document.getElementById('it-name').innerText = currentIt || "...";
+        });
+        db.ref('tag/players').on('value', s => { others = s.val() || {}; });
+
+        loop = setInterval(() => {
+            if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5; if(keys['KeyA']) px-=5; if(keys['KeyD']) px+=5;
+            db.ref('tag/players/' + myUser).set({ x: px, y: py });
+            db.ref('tag/players/' + myUser).onDisconnect().remove();
+
+            // TAG MECHANIC WITH 3S IMMUNITY
+            if(myUser === currentIt && Date.now() > tagCooldown) {
+                for(let id in others) {
+                    if(id !== myUser && Math.hypot(px - others[id].x, py - others[id].y) < 25) {
+                        db.ref('tag/it').set(id);
+                        tagCooldown = Date.now() + 3000;
+                        break;
+                    }
+                }
+            }
+
+            cx.clearRect(0,0,400,400);
+            for(let id in others) {
+                let o = others[id];
+                cx.fillStyle = (id === currentIt) ? "#ff0000" : "#ffffff";
+                // Immunity flashing
+                if(id === currentIt && Date.now() < tagCooldown) cx.globalAlpha = Math.sin(Date.now()/50)*0.5+0.5;
+                cx.fillRect(o.x-10, o.y-10, 20, 20);
+                cx.globalAlpha = 1.0;
+                cx.font = "10px Arial"; cx.fillText(id, o.x-12, o.y-15);
+            }
+        }, 30);
+    }
 </script>
 </body>
 </html>
