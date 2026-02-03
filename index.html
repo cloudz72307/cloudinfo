@@ -107,7 +107,7 @@
     <div id="tag-container">
         <div style="letter-spacing:5px; margin-bottom:5px; font-weight:bold;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></div>
         <canvas id="tag-canvas" width="1000" height="650"></canvas>
-        <button class="btn-style c-white" style="max-width:200px;" onclick="toggleTagMode(false)">LEAVE ARENA</button>
+        <button class="btn-style c-white" style="max-width:200px; z-index: 5001;" onclick="toggleTagMode(false)">EXIT ARENA</button>
     </div>
 
     <div class="corner-controls" id="controls">
@@ -129,7 +129,16 @@
         let myUser = "", players = {}, itPlayer = "", keys = {}, grabbing = false;
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
-        const obstacles = [{x: 450, y: 275, w: 100, h: 100}, {x: 150, y: 150, w: 200, h: 20}, {x: 650, y: 450, w: 200, h: 20}, {x: 100, y: 450, w: 20, h: 100}];
+        
+        // Obstacles placed away from the center (500, 325)
+        const obstacles = [
+            {x: 200, y: 150, w: 200, h: 20}, 
+            {x: 600, y: 150, w: 200, h: 20}, 
+            {x: 200, y: 480, w: 200, h: 20}, 
+            {x: 600, y: 480, w: 200, h: 20},
+            {x: 480, y: 50, w: 40, h: 100},
+            {x: 480, y: 500, w: 40, h: 100}
+        ];
 
         window.addEventListener('mousemove', e => { 
             const cur = document.getElementById('cursor-wrapper');
@@ -141,8 +150,8 @@
         });
         window.addEventListener('mousedown', () => grabbing = true);
         window.addEventListener('mouseup', () => grabbing = false);
-        window.addEventListener('keydown', e => keys[e.code] = true);
-        window.addEventListener('keyup', e => keys[e.code] = false);
+        window.addEventListener('keydown', e => { keys[e.code] = true; });
+        window.addEventListener('keyup', e => { keys[e.code] = false; });
 
         function initApp() {
             document.getElementById('intro-overlay').style.display='none';
@@ -151,7 +160,7 @@
                 "particles": {
                     "number": { "value": 140 },
                     "color": { "value": "#ffffff" },
-                    "opacity": { "value": 0.4 }, // DIMMER STARS
+                    "opacity": { "value": 0.4 },
                     "size": { "value": 4 }, 
                     "line_linked": { "enable": true, "distance": 160, "color": "#ffffff", "opacity": 0.5, "width": 2 },
                     "move": { "enable": true, "speed": 1.5 }
@@ -192,7 +201,8 @@
             document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
             document.getElementById('main-content').style.display = on ? 'none' : 'flex';
             if(on) {
-                db.ref('globalTag/players/' + myUser).set({ x: 150, y: 150 });
+                // SPAWN IN MIDDLE
+                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 325 });
                 db.ref('globalTag/it').transaction(c => c || myUser);
                 requestAnimationFrame(tagLoop);
             } else {
@@ -202,24 +212,35 @@
 
         function tagLoop() {
             if (document.getElementById('tag-container').style.display === 'none') return;
-            let me = players[myUser] || {x:150, y:150};
-            let oldX = me.x, oldY = me.y;
+            let me = players[myUser] || {x:500, y:325};
+            let nextX = me.x, nextY = me.y;
+            let speed = 7;
             
             if(!grabbing) {
-                if(keys['KeyW']) me.y -= 7; if(keys['KeyS']) me.y += 7;
-                if(keys['KeyA']) me.x -= 7; if(keys['KeyD']) me.x += 7;
+                if(keys['KeyW']) nextY -= speed;
+                if(keys['KeyS']) nextY += speed;
+                if(keys['KeyA']) nextX -= speed;
+                if(keys['KeyD']) nextX += speed;
             }
 
-            obstacles.forEach(o => {
-                if(me.x + 15 > o.x && me.x - 15 < o.x + o.w && me.y + 15 > o.y && me.y - 15 < o.y + o.h) { me.x = oldX; me.y = oldY; }
-            });
+            // Boundary + Obstacle Checks
+            let collision = false;
+            if(nextX < 15 || nextX > 985 || nextY < 15 || nextY > 635) collision = true;
             
-            if(me.x !== oldX || me.y !== oldY) db.ref('globalTag/players/' + myUser).set(me);
+            obstacles.forEach(o => {
+                if(nextX + 15 > o.x && nextX - 15 < o.x + o.w && nextY + 15 > o.y && nextY - 15 < o.y + o.h) {
+                    collision = true;
+                }
+            });
+
+            if(!collision && (nextX !== me.x || nextY !== me.y)) {
+                db.ref('globalTag/players/' + myUser).set({ x: nextX, y: nextY });
+            }
 
             if(itPlayer === myUser) {
                 document.getElementById('tag-status').innerText = "IT"; document.getElementById('tag-status').style.color = "red";
                 for(let id in players) {
-                    if(id !== myUser && Math.hypot(me.x - players[id].x, me.y - players[id].y) < 30) {
+                    if(id !== myUser && Math.hypot(nextX - players[id].x, nextY - players[id].y) < 30) {
                         db.ref('globalTag/it').set(id);
                     }
                 }
@@ -271,7 +292,7 @@
                 }, 100);
             }
             if(t === 'zombies') {
-                let px=200, py=200, zoms=[], buls=[];
+                let px=200, py=200, zoms=[];
                 gameInt = setInterval(() => {
                     if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5; if(keys['KeyA']) px-=5; if(keys['KeyD']) px+=5;
                     if(Math.random()<0.04) zoms.push({x:Math.random()*400, y:0});
