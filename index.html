@@ -27,13 +27,12 @@
 
         /* NOTIFICATIONS */
         #notif-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .custom-notif { background: rgba(0,0,0,0.95); border: 2px solid #fff; padding: 15px; color: #fff; font-size: 0.75rem; letter-spacing: 1px; transform: translateX(150%); transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        .custom-notif { background: rgba(0,0,0,0.95); border: 2px solid #fff; padding: 15px; color: #fff; font-size: 0.75rem; letter-spacing: 1px; transform: translateX(150%); transition: 0.4s; }
         .custom-notif.show { transform: translateX(0); }
 
         /* TOP LEFT UI */
         .top-left-controls { position: fixed; top: 20px; left: 20px; z-index: 6000; display: flex; flex-direction: column; gap: 8px; }
-        .small-btn { padding: 8px 15px; background: transparent; border: 1px solid #fff; color: #fff; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; }
-        .small-btn:hover { background: #fff; color: #000; }
+        .small-btn { padding: 8px 15px; background: transparent; border: 1px solid #fff; color: #fff; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; }
 
         /* MAIN UI */
         h1.title { font-size: 80px; letter-spacing: 20px; text-transform: uppercase; margin-bottom: 20px; text-align: center; z-index: 10; }
@@ -41,21 +40,17 @@
         .btn-style { width: 100%; max-width: 400px; padding: 16px; border: 2px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.1s; font-weight: bold; text-transform: uppercase; text-decoration: none; }
         .btn-style:hover { background: #fff; color: #000; }
 
-        .c-blurple { border-color: #5865F2; color: #5865F2; }
-        .c-green { border-color: #00D632; color: #00D632; }
-        .c-blue { border-color: #00A2FF; color: #00A2FF; }
-
         /* TAG ARENA */
         #tag-container { display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; position: fixed; inset: 0; background: #000; }
         #tag-canvas { background: #050505; border: 5px solid #fff; }
-        .tag-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; border: 2px solid #fff; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; }
 
         /* CHAT */
         #chat-window { display: none; position: fixed; bottom: 30px; left: 30px; width: 320px; height: 400px; background: rgba(0,0,0,0.95); border: 2px solid #fff; z-index: 5500; flex-direction: column; }
-        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; font-family: monospace; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; font-family: monospace; }
         #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 2px solid #fff; }
         
         #game-canvas { background: #000; border: 2px solid #fff; display: block; margin: 10px auto; }
+        .game-controls { display: flex; gap: 10px; justify-content: center; }
     </style>
 </head>
 <body>
@@ -64,37 +59,25 @@
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
     <div id="notif-container"></div>
 
-    <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style" onclick="initApp()">ENTER</button>
-    </div>
-
     <div class="top-left-controls" id="corner-ui" style="display:none;">
         <button class="small-btn" onclick="toggleChat()">CHAT</button>
         <button class="small-btn" onclick="openModal('info-modal')">INFO</button>
     </div>
 
-    <div id="login-modal" class="modal-box" style="display:block;">
-        <h2 style="letter-spacing:10px;">ACCESS</h2><br>
-        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center; margin-bottom: 10px;">
-        <input type="password" id="user-pw" placeholder="PASS" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center; margin-bottom: 20px;">
-        <button class="btn-style" onclick="handleAuth()">LOGIN</button>
-    </div>
-
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
-        <button class="btn-style c-blurple" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
-        <a href="https://cash.app/$roman479" target="_blank" class="btn-style c-green">CASHAPP</a>
-        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" class="btn-style c-blue">ROBLOX DONATE</a>
+        <button class="btn-style" style="border-color:#5865F2; color:#5865F2;" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
+        <a href="https://cash.app/$roman479" target="_blank" class="btn-style" style="border-color:#00D632; color:#00D632;">CASHAPP</a>
+        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" class="btn-style" style="border-color:#00A2FF; color:#00A2FF;">ROBLOX DONATE</a>
         <button class="btn-style" onclick="openModal('games-hub')">GAMES</button>
     </div>
 
     <div id="info-modal" class="modal-box">
-        <p style="font-size: 0.9rem; line-height: 1.6; text-align: center; letter-spacing: 1px;">
+        <p style="font-size: 0.9rem; line-height: 1.6;">
             Hi, I'm Cloudz. I do a lot of coding, especially with Python. I'm currently trying to learn every major language I want to know how to make whatever I want.
             <br><br>
             See that Cash App button? If you want to support me, you can donate there or use it for business. If you want to talk business for an app or a website, DM me on discord.
         </p>
-        <br>
         <button class="btn-style" onclick="closeModals()">CLOSE</button>
     </div>
 
@@ -104,26 +87,29 @@
         <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
         <button class="btn-style" onclick="launchGame('shooter')">SHOOTER</button>
         <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
-        <button class="btn-style" onclick="launchGame('ttt')">TIC-TAC-TOE</button>
+        <button class="btn-style" onclick="openModal('ttt-select')">TIC-TAC-TOE</button>
         <button class="btn-style" onclick="closeModals()">BACK</button>
     </div>
 
-    <div id="admin-panel" class="modal-box">
-        <h2 style="color: red;">ADMIN ROOT</h2><br>
-        <button class="btn-style" onclick="wipeArena()">WIPE GHOSTS</button>
-        <button class="btn-style" onclick="closeModals()">CLOSE</button>
-    </div>
-
-    <div id="tag-container">
-        <div class="tag-close" onclick="toggleTagMode(false)">×</div>
-        <div style="margin-bottom: 10px;">IT: <span id="it-name" style="color:red;">...</span></div>
-        <canvas id="tag-canvas" width="1000" height="600"></canvas>
+    <div id="ttt-select" class="modal-box">
+        <button class="btn-style" onclick="launchGame('ttt-bot')">VS BOT</button>
+        <button class="btn-style" onclick="launchGame('ttt-multi')">MULTIPLAYER</button>
+        <button class="btn-style" onclick="openModal('games-hub')">BACK</button>
     </div>
 
     <div id="play-area" class="modal-box">
         <h3 id="g-status">SCORE: 0</h3>
         <canvas id="game-canvas" width="400" height="400"></canvas>
-        <button class="btn-style" onclick="stopGame()">QUIT</button>
+        <div class="game-controls">
+            <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryLastGame()">RETRY</button>
+            <button class="btn-style" onclick="stopGame()">QUIT</button>
+        </div>
+    </div>
+
+    <div id="tag-container">
+        <div style="position:absolute; top:20px; right:20px; font-size:30px; border:2px solid #fff; padding:10px;" onclick="toggleTagMode(false)">×</div>
+        <div style="margin-bottom:10px;">IT: <span id="it-name" style="color:red;">...</span></div>
+        <canvas id="tag-canvas" width="1000" height="600"></canvas>
     </div>
 
     <div id="chat-window">
@@ -131,148 +117,87 @@
         <input type="text" id="chat-input" placeholder="MESSAGE...">
     </div>
 
-    <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    <div id="login-modal" class="modal-box" style="display:block;">
+        <h2 style="letter-spacing:10px;">ACCESS</h2><br>
+        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center;">
+        <button class="btn-style" onclick="handleAuth()">LOGIN</button>
+    </div>
 
     <script>
         const firebaseConfig = { databaseURL: "https://cloudzinfo-1f0ec-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {}, gameLoop;
-        const tagCanvas = document.getElementById('tag-canvas');
-        const tagCtx = tagCanvas.getContext('2d');
+        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {}, gameLoop, lastGameType = "";
+        const tagCtx = document.getElementById('tag-canvas').getContext('2d');
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
 
         function notify(msg) {
             const container = document.getElementById('notif-container');
-            const el = document.createElement('div');
-            el.className = 'custom-notif';
-            el.innerText = msg;
-            container.appendChild(el);
-            setTimeout(() => el.classList.add('show'), 100);
+            const el = document.createElement('div'); el.className = 'custom-notif'; el.innerText = msg;
+            container.appendChild(el); setTimeout(() => el.classList.add('show'), 100);
             setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 500); }, 3000);
         }
 
-        window.addEventListener('keydown', e => {
-            keys[e.code] = true;
-            if(e.code === 'Backslash' && isAdmin) openModal('admin-panel');
-        });
+        window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code === 'Backslash' && isAdmin) openModal('admin-panel'); });
         window.addEventListener('keyup', e => keys[e.code] = false);
-        window.addEventListener('mousemove', e => {
-            document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
-            document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
+        window.addEventListener('mousemove', e => { 
+            document.getElementById('cursor-wrapper').style.left = e.clientX + 'px'; 
+            document.getElementById('cursor-wrapper').style.top = e.clientY + 'px'; 
         });
 
-        function initApp() {
-            document.getElementById('intro-overlay').style.display='none';
-            document.getElementById('bg-music').play().catch(()=>{});
-            particlesJS("particles-js", {"particles":{"number":{"value":60},"color":{"value":"#fff"},"size":{"value":2},"move":{"speed":1}}});
-            notify("CONNECTED TO CLOUDZ");
-        }
-
-        async function handleAuth() {
+        function handleAuth() {
             const u = document.getElementById('user-id').value.trim().toUpperCase();
             if(!u) return;
-            myUser = u;
-            if(u === "CLOUDZ!") { isAdmin = true; notify("ROOT ACCESS GRANTED"); }
+            myUser = u; if(u === "CLOUDZ!") isAdmin = true;
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
             document.getElementById('corner-ui').style.display='flex';
-            startChat();
+            particlesJS("particles-js", {"particles":{"number":{"value":50},"color":{"value":"#fff"},"size":{"value":2},"move":{"speed":1}}});
+            db.ref('chat').limitToLast(10).on('child_added', s => {
+                const h = document.getElementById('chat-history'); h.innerHTML += `<div><b>${s.val().u}:</b> ${s.val().t}</div>`; h.scrollTop = h.scrollHeight;
+            });
             db.ref('globalTag/it').on('value', s => { itPlayer = s.val(); document.getElementById('it-name').innerText = itPlayer || "NONE"; });
         }
 
-        function startChat() {
-            db.ref('chat').limitToLast(10).on('child_added', s => {
-                const h = document.getElementById('chat-history');
-                h.innerHTML += `<div><b>${s.val().u}:</b> ${s.val().t}</div>`;
-                h.scrollTop = h.scrollHeight;
-            });
-        }
+        function toggleChat() { const cw = document.getElementById('chat-window'); cw.style.display = (cw.style.display === 'flex') ? 'none' : 'flex'; }
+        document.getElementById('chat-input').onkeydown = e => { if(e.key === 'Enter' && e.target.value.trim()) { db.ref('chat').push({u: myUser, t: e.target.value}); e.target.value = ""; }};
 
-        document.getElementById('chat-input').onkeydown = e => {
-            if(e.key === 'Enter' && e.target.value.trim()) {
-                db.ref('chat').push({u: myUser, t: e.target.value});
-                e.target.value = "";
-            }
-        };
-
-        function toggleChat() {
-            const cw = document.getElementById('chat-window');
-            cw.style.display = (cw.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        // --- GLOBAL TAG ---
-        function toggleTagMode(on) {
-            closeModals();
-            document.getElementById('main-content').style.display = on ? 'none' : 'flex';
-            document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
-            if(on) {
-                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 300, lastSeen: Date.now() });
-                db.ref('globalTag/players/' + myUser).onDisconnect().remove();
-                db.ref('globalTag/it').transaction(c => c === null ? myUser : c);
-                requestAnimationFrame(tagCycle);
-            } else {
-                db.ref('globalTag/players/' + myUser).remove();
-                if(itPlayer === myUser) {
-                    db.ref('globalTag/players').once('value', s => {
-                        const ids = Object.keys(s.val()||{});
-                        db.ref('globalTag/it').set(ids.length > 0 ? ids[0] : null);
-                    });
-                }
-            }
-        }
-
-        function tagCycle() {
-            if (document.getElementById('tag-container').style.display === 'none') return;
-            db.ref('globalTag/players').once('value', s => players = s.val() || {});
-            let me = players[myUser] || {x:500, y:300};
-            let speed = (isAdmin || itPlayer === myUser) ? 9 : 6;
-            if(keys['KeyW']) me.y -= speed; if(keys['KeyS']) me.y += speed;
-            if(keys['KeyA']) me.x -= speed; if(keys['KeyD']) me.x += speed;
-            me.x = Math.max(20, Math.min(980, me.x)); me.y = Math.max(20, Math.min(580, me.y));
-            db.ref('globalTag/players/' + myUser).update({ x: me.x, y: me.y, lastSeen: Date.now() });
-            tagCtx.clearRect(0,0,1000,600);
-            tagCtx.strokeStyle = "#fff"; tagCtx.strokeRect(5,5,990,590);
-            for(let id in players) {
-                let p = players[id];
-                if(Date.now() - p.lastSeen > 8000) continue;
-                if(itPlayer === myUser && id !== myUser && Math.hypot(me.x - p.x, me.y - p.y) < 30) { db.ref('globalTag/it').set(id); notify("YOU TAGGED " + id); }
-                tagCtx.fillStyle = (id === itPlayer) ? "#f00" : (id === "CLOUDZ!" ? "#ffd700" : "#fff");
-                tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
-                tagCtx.fillStyle = "#fff"; tagCtx.fillText(id, p.x - 15, p.y - 20);
-            }
-            requestAnimationFrame(tagCycle);
-        }
-
-        // --- SINGLE PLAYER ---
+        // --- GAME LAUNCHER & RETRY ---
         function launchGame(type) {
-            openModal('play-area');
-            clearInterval(gameLoop);
+            lastGameType = type;
+            document.getElementById('retry-btn').style.display = 'none';
+            openModal('play-area'); clearInterval(gameLoop);
             if(type === 'snake') startSnake();
             else if(type === 'zombies') startZombies();
             else if(type === 'dino') startDino();
             else if(type === 'shooter') startShooter();
-            else if(type === 'ttt') startTTT();
+            else if(type === 'ttt-bot') startTTT(true);
+            else if(type === 'ttt-multi') startTTT(false);
         }
 
-        function stopGame() { clearInterval(gameLoop); closeModals(); }
+        function retryLastGame() { launchGame(lastGameType); }
+        function stopGame() { clearInterval(gameLoop); gCanvas.onclick = null; closeModals(); }
 
+        function gameOver(msg) {
+            clearInterval(gameLoop);
+            notify(msg);
+            if(lastGameType !== 'ttt-multi') document.getElementById('retry-btn').style.display = 'inline-block';
+        }
+
+        // --- GAME LOGIC ---
         function startSnake() {
             let s = [{x:10, y:10}], dir = {x:1, y:0}, food = {x:15, y:15}, score = 0;
             gameLoop = setInterval(() => {
-                if(keys['KeyW'] && dir.y === 0) dir = {x:0, y:-1};
-                if(keys['KeyS'] && dir.y === 0) dir = {x:0, y:1};
-                if(keys['KeyA'] && dir.x === 0) dir = {x:-1, y:0};
-                if(keys['KeyD'] && dir.x === 0) dir = {x:1, y:0};
+                if(keys['KeyW'] && dir.y === 0) dir = {x:0, y:-1}; if(keys['KeyS'] && dir.y === 0) dir = {x:0, y:1};
+                if(keys['KeyA'] && dir.x === 0) dir = {x:-1, y:0}; if(keys['KeyD'] && dir.x === 0) dir = {x:1, y:0};
                 let head = {x: s[0].x + dir.x, y: s[0].y + dir.y};
-                if(head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) { stopGame(); notify("GAME OVER"); return; }
+                if(head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) return gameOver("DIED");
                 s.unshift(head);
-                if(head.x === food.x && head.y === food.y) { score++; food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)}; }
-                else s.pop();
+                if(head.x === food.x && head.y === food.y) { score++; food = {x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else s.pop();
                 gCtx.clearRect(0,0,400,400); gCtx.fillStyle="red"; gCtx.fillRect(food.x*20, food.y*20, 18, 18);
-                gCtx.fillStyle="white"; s.forEach(p => gCtx.fillRect(p.x*20, p.y*20, 18, 18));
+                gCtx.fillStyle="#fff"; s.forEach(p => gCtx.fillRect(p.x*20, p.y*20, 18, 18));
                 document.getElementById('g-status').innerText = "SCORE: " + score;
             }, 100);
         }
@@ -286,70 +211,73 @@
                 zoms.forEach(z => {
                     let a = Math.atan2(py-z.y, px-z.x); z.x += Math.cos(a)*2; z.y += Math.sin(a)*2;
                     gCtx.fillStyle="red"; gCtx.fillRect(z.x-5, z.y-5, 10, 10);
-                    if(Math.hypot(px-z.x, py-z.y) < 15) { stopGame(); notify("GAME OVER"); }
+                    if(Math.hypot(px-z.x, py-z.y) < 15) gameOver("ZOMBIES ATE YOU");
                 });
                 score++; document.getElementById('g-status').innerText = "SURVIVED: " + score;
             }, 20);
         }
 
-        function startDino() {
-            let y=350, vy=0, obs=[], score=0;
-            gameLoop = setInterval(() => {
-                if(keys['Space'] && y >= 350) vy = -12;
-                vy += 0.6; y += vy; if(y > 350) y = 350;
-                if(Math.random() < 0.02) obs.push(400);
-                gCtx.clearRect(0,0,400,400); gCtx.fillStyle="#fff"; gCtx.fillRect(50, y-20, 20, 20);
-                obs = obs.map(o => o - 5).filter(o => {
-                    gCtx.fillStyle="red"; gCtx.fillRect(o, 350, 20, 30);
-                    if(o < 70 && o > 30 && y > 320) { stopGame(); notify("GAME OVER"); }
-                    return o > -20;
-                });
-                score++; document.getElementById('g-status').innerText = "SCORE: " + score;
-            }, 20);
-        }
-
-        function startShooter() {
-            let px=200, bullets=[], enemies=[], score=0;
-            gameLoop = setInterval(() => {
-                if(keys['KeyA']) px-=6; if(keys['KeyD']) px+=6;
-                if(keys['Space']) bullets.push({x:px, y:370});
-                if(Math.random() < 0.04) enemies.push({x:Math.random()*380, y:0});
-                gCtx.clearRect(0,0,400,400); gCtx.fillStyle="#fff"; gCtx.fillRect(px-15, 380, 30, 10);
-                bullets = bullets.map(b => ({x:b.x, y:b.y-8})).filter(b => {
-                    gCtx.fillStyle="yellow"; gCtx.fillRect(b.x-2, b.y, 4, 10); return b.y > 0;
-                });
-                enemies = enemies.map(e => ({x:e.x, y:e.y+4})).filter(e => {
-                    gCtx.fillStyle="red"; gCtx.fillRect(e.x, e.y, 20, 20);
-                    bullets.forEach(b => { if(Math.hypot(b.x-e.x, b.y-e.y) < 20) e.dead = true; });
-                    if(e.dead) score += 10;
-                    if(e.y > 400) { stopGame(); notify("MISSED TARGET"); }
-                    return !e.dead;
-                });
-                document.getElementById('g-status').innerText = "SCORE: " + score;
-            }, 20);
-        }
-
-        function startTTT() {
-            let b = ["","","","","","","","",""], t = "X";
-            notify("TTT: CLICK GRID");
-            gCtx.clearRect(0,0,400,400); gCtx.strokeStyle="#fff";
+        function startTTT(isBot) {
+            let b = ["","","","","","","","",""], turn = "X";
+            gCtx.clearRect(0,0,400,400); 
+            const draw = (board) => {
+                gCtx.clearRect(0,0,400,400); gCtx.strokeStyle="#fff"; gCtx.lineWidth=2;
+                for(let i=1;i<3;i++){ gCtx.beginPath(); gCtx.moveTo(i*133,0); gCtx.lineTo(i*133,400); gCtx.stroke(); gCtx.beginPath(); gCtx.moveTo(0,i*133); gCtx.lineTo(400,i*133); gCtx.stroke(); }
+                gCtx.font="40px Arial"; gCtx.fillStyle="#fff";
+                board.forEach((v, i) => { if(v) gCtx.fillText(v, (i%3)*133+50, Math.floor(i/3)*133+85); });
+            };
+            draw(b);
+            if(!isBot) {
+                db.ref('ttt_game').on('value', s => { b = s.val() || ["","","","","","","","",""]; draw(b); });
+            }
             gCanvas.onclick = e => {
-                const rect = gCanvas.getBoundingClientRect();
-                const x = Math.floor((e.clientX - rect.left)/133), y = Math.floor((e.clientY - rect.top)/133), i = y*3 + x;
-                if(b[i] === "") { b[i] = t; t = t === "X" ? "O" : "X"; drawTTT(b); }
+                const r = gCanvas.getBoundingClientRect(), x = Math.floor((e.clientX-r.left)/133), y = Math.floor((e.clientY-r.top)/133), i = y*3+x;
+                if(b[i] === "") {
+                    b[i] = "X"; draw(b);
+                    if(isBot) {
+                        setTimeout(() => { 
+                            let empty = b.map((v,idx) => v === "" ? idx : null).filter(v => v !== null);
+                            if(empty.length > 0) b[empty[Math.floor(Math.random()*empty.length)]] = "O";
+                            draw(b);
+                        }, 500);
+                    } else { db.ref('ttt_game').set(b); }
+                }
             };
         }
-        function drawTTT(b) {
-            gCtx.clearRect(0,0,400,400); gCtx.strokeStyle="#fff"; gCtx.lineWidth=2;
-            for(let i=1;i<3;i++){ gCtx.beginPath(); gCtx.moveTo(i*133,0); gCtx.lineTo(i*133,400); gCtx.stroke(); gCtx.beginPath(); gCtx.moveTo(0,i*133); gCtx.lineTo(400,i*133); gCtx.stroke(); }
-            gCtx.font="40px Arial"; gCtx.fillStyle="#fff";
-            b.forEach((v, i) => { if(v) gCtx.fillText(v, (i%3)*133+50, Math.floor(i/3)*133+80); });
+
+        // --- TAG ARENA ---
+        function toggleTagMode(on) {
+            closeModals(); document.getElementById('main-content').style.display = on ? 'none' : 'flex';
+            document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
+            if(on) {
+                db.ref('globalTag/players/'+myUser).set({x:500, y:300, lastSeen:Date.now()});
+                db.ref('globalTag/players/'+myUser).onDisconnect().remove();
+                db.ref('globalTag/it').transaction(c => c === null ? myUser : c);
+                requestAnimationFrame(tagCycle);
+            } else { db.ref('globalTag/players/'+myUser).remove(); }
         }
 
-        function wipeArena() { if(isAdmin) { db.ref('globalTag/players').remove(); db.ref('globalTag/it').set(null); notify("ARENA PURGED"); } }
+        function tagCycle() {
+            if (document.getElementById('tag-container').style.display === 'none') return;
+            db.ref('globalTag/players').once('value', s => players = s.val() || {});
+            let me = players[myUser] || {x:500, y:300};
+            let speed = (isAdmin || itPlayer === myUser) ? 9 : 6;
+            if(keys['KeyW']) me.y -= speed; if(keys['KeyS']) me.y += speed; if(keys['KeyA']) me.x -= speed; if(keys['KeyD']) me.x += speed;
+            me.x = Math.max(20, Math.min(980, me.x)); me.y = Math.max(20, Math.min(580, me.y));
+            db.ref('globalTag/players/'+myUser).update({x:me.x, y:me.y, lastSeen:Date.now()});
+            tagCtx.clearRect(0,0,1000,600); tagCtx.strokeStyle="#fff"; tagCtx.strokeRect(5,5,990,590);
+            for(let id in players) {
+                let p = players[id]; if(Date.now() - p.lastSeen > 8000) continue;
+                if(itPlayer === myUser && id !== myUser && Math.hypot(me.x-p.x, me.y-p.y) < 30) db.ref('globalTag/it').set(id);
+                tagCtx.fillStyle = (id === itPlayer) ? "#f00" : (id === "CLOUDZ!" ? "#ffd700" : "#fff");
+                tagCtx.fillRect(p.x-15, p.y-15, 30, 30); tagCtx.fillStyle="#fff"; tagCtx.fillText(id, p.x-15, p.y-20);
+            }
+            requestAnimationFrame(tagCycle);
+        }
+
+        function closeModals() { ['games-hub', 'info-modal', 'play-area', 'ttt-select'].forEach(m => document.getElementById(m).style.display = 'none'); }
         function openModal(id) { closeModals(); document.getElementById(id).style.display = 'block'; }
-        function closeModals() { ['games-hub', 'info-modal', 'admin-panel', 'play-area'].forEach(m => document.getElementById(m).style.display = 'none'); }
-        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud").then(() => notify("DISCORD COPIED")); }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud").then(() => notify("COPIED")); }
     </script>
 </body>
 </html>
