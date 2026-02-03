@@ -56,10 +56,6 @@
         }
         .btn-style:hover, .tiny-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
 
-        #btn-discord { border-color: #5865F2; color: #5865F2; }
-        #btn-cashapp { border-color: #00D632; color: #00D632; }
-        #btn-robux { border-color: #00A2FF; color: #00A2FF; }
-        
         input { background: #000; border: 1px solid #fff; color: #fff; padding: 12px; width: 100%; max-width: 300px; text-align: center; margin-bottom: 10px; font-family: inherit; }
 
         /* HUD & CHAT */
@@ -100,7 +96,7 @@
     <div id="info-modal" class="modal-box">
         <button style="float:right; background:none; border:none; color:white; font-size:1.5rem;" onclick="this.parentElement.style.display='none'">[X]</button>
         <h3>ABOUT CLOUDZ</h3><br>
-        <p>I code tools and make games. Use the buttons on the main screen to donate or find my discord.</p>
+        <p>I code tools and make games.</p>
     </div>
 
     <div id="chat-window">
@@ -111,8 +107,7 @@
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
         <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: hellothere.33</button>
-        <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
-        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">DONATE ROBUX</a>
+        <a href="https://cash.app/$roman479" target="_blank" class="btn-style">CASH APP</a>
         <button class="btn-style" onclick="document.getElementById('games-hub').style.display='block'">GAMES</button>
     </div>
 
@@ -153,37 +148,31 @@
             document.getElementById('auth-modal').style.display='block';
             document.getElementById('bg-music').play().catch(()=>{});
             
-            // CLEAN PIN-PRICK STAR CONSTELLATION CONFIG
+            // CONSTELLATION STYLE STAR CONFIG
             particlesJS("particles-js", {
                 "particles": {
-                    "number": { "value": 200, "density": { "enable": true, "value_area": 800 } },
+                    "number": { "value": 150, "density": { "enable": true, "value_area": 800 } },
                     "color": { "value": "#ffffff" },
                     "shape": { "type": "circle" },
-                    "opacity": { 
-                        "value": 0.5, 
-                        "random": true,
-                        "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
-                    },
-                    "size": { "value": 1, "random": false }, // NO BLOBS, ONLY DOTS
+                    "opacity": { "value": 0.8, "random": true },
+                    "size": { "value": 1.2, "random": true }, // Sharp stars
                     "line_linked": { 
                         "enable": true, 
-                        "distance": 100, 
+                        "distance": 130, 
                         "color": "#ffffff", 
-                        "opacity": 0.05, // VERY DIM LINES
-                        "width": 1 
+                        "opacity": 0.1, // Dim lines by default
+                        "width": 0.8 
                     },
-                    "move": { "enable": true, "speed": 0.3, "direction": "none", "random": true, "straight": false, "out_mode": "out" }
+                    "move": { "enable": true, "speed": 0.3, "direction": "none", "random": true, "out_mode": "out" }
                 },
                 "interactivity": {
-                    "detect_on": "canvas",
                     "events": {
-                        "onhover": { "enable": true, "mode": "grab" }
+                        "onhover": { "enable": true, "mode": "grab" } // Lines light up when near
                     },
                     "modes": {
-                        "grab": { "distance": 150, "line_linked": { "opacity": 0.3 } }
+                        "grab": { "distance": 180, "line_linked": { "opacity": 0.5 } }
                     }
-                },
-                "retina_detect": true
+                }
             });
         }
 
@@ -192,32 +181,25 @@
             document.getElementById('auth-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
             document.getElementById('controls').style.display='flex';
-            
             db.ref('online/' + myName).set(true);
             db.ref('online/' + myName).onDisconnect().remove();
             db.ref('online').on('value', s => {
                 document.getElementById('live-counter').style.display = 'block';
                 document.getElementById('live-counter').innerText = `LIVE: ${s.numChildren()} USERS`;
             });
-
             db.ref('chat').limitToLast(15).on('child_added', s => {
-                const h = document.getElementById('chat-history');
-                h.innerHTML += `<div><b style="color:#0f0">${s.val().u}:</b> ${s.val().t}</div>`;
-                h.scrollTop = h.scrollHeight;
+                document.getElementById('chat-history').innerHTML += `<div><b style="color:#0f0">${s.val().u}:</b> ${s.val().t}</div>`;
+                document.getElementById('chat-history').scrollTop = 9999;
             });
         }
 
         function toggleChat() { let c = document.getElementById('chat-window'); c.style.display = (c.style.display === 'flex' ? 'none' : 'flex'); }
         document.getElementById('chat-input').onkeydown = e => { if(e.key === 'Enter' && e.target.value.trim()){ db.ref('chat').push({u: myName, t: e.target.value}); e.target.value = ""; } };
 
-        function copyDiscord() { navigator.clipboard.writeText("hellothere.33"); document.getElementById('btn-discord').innerText = "COPIED"; setTimeout(()=>document.getElementById('btn-discord').innerText="DISCORD: hellothere.33", 2000); }
-
         function handleShoot(e) {
             if(currentType === 'zombies' && active) {
                 let rect = canvas.getBoundingClientRect();
-                let targetX = e.clientX - rect.left;
-                let targetY = e.clientY - rect.top;
-                let angle = Math.atan2(targetY - pY, targetX - pX);
+                let angle = Math.atan2((e.clientY - rect.top) - pY, (e.clientX - rect.left) - pX);
                 bullets.push({ x: pX, y: pY, dx: Math.cos(angle) * 7, dy: Math.sin(angle) * 7 });
             }
         }
@@ -234,52 +216,34 @@
         }
 
         function doSnake() {
-            if((keys['KeyW'] || keys['ArrowUp']) && sDir!=='D') sDir='U';
-            if((keys['KeyS'] || keys['ArrowDown']) && sDir!=='U') sDir='D';
-            if((keys['KeyA'] || keys['ArrowLeft']) && sDir!=='R') sDir='L';
-            if((keys['KeyD'] || keys['ArrowRight']) && sDir!=='L') sDir='R';
+            if(keys['KeyW'] && sDir!=='D') sDir='U'; if(keys['KeyS'] && sDir!=='U') sDir='D';
+            if(keys['KeyA'] && sDir!=='R') sDir='L'; if(keys['KeyD'] && sDir!=='L') sDir='R';
             let head = {...snake[0]};
             if(sDir==='U') head.y--; if(sDir==='D') head.y++; if(sDir==='L') head.x--; if(sDir==='R') head.x++;
             if(head.x<0||head.x>=20||head.y<0||head.y>=20) return end();
             snake.unshift(head);
-            if(head.x===food.x && head.y===food.y) {
-                score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
-                document.getElementById('g-score').innerText = score;
-            } else snake.pop();
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
-            ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
-            ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
+            if(head.x===food.x && head.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; document.getElementById('g-score').innerText = score; } else snake.pop();
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18)); ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
         }
 
         function doZoms() {
             if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
             if(Math.random()<0.02) zoms.push({x:Math.random()*400, y:Math.random()*400});
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
-            ctx.fillStyle="#00f"; ctx.fillRect(pX-10,pY-10,20,20);
-            bullets.forEach((b,i)=>{ 
-                b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,4,4);
-                if(b.x<0||b.x>400||b.y<0||b.y>400) bullets.splice(i,1);
-            });
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#00f"; ctx.fillRect(pX-10,pY-10,20,20);
+            bullets.forEach((b,i)=>{ b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,4,4); });
             zoms.forEach((z,zi)=>{
                 let d=Math.hypot(pX-z.x, pY-z.y); z.x+=(pX-z.x)/d*1.5; z.y+=(pY-z.y)/d*1.5;
                 ctx.fillStyle="#f00"; ctx.fillRect(z.x-10,z.y-10,20,20);
                 if(d<15) end();
-                bullets.forEach((b,bi)=>{
-                    if(Math.hypot(b.x-z.x, b.y-z.y)<15){ zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-score').innerText=score; }
-                });
+                bullets.forEach((b,bi)=>{ if(Math.hypot(b.x-z.x, b.y-z.y)<15){ zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-score').innerText=score; } });
             });
         }
 
         function doMulti() {
             if(keys['KeyW']) pY-=4; if(keys['KeyS']) pY+=4; if(keys['KeyA']) pX-=4; if(keys['KeyD']) pX+=4;
-            db.ref('pos/'+myName).set({x:pX, y:pY, role: currentType==='ttt' ? 'Innocent' : 'Player'});
+            db.ref('pos/'+myName).set({x:pX, y:pY});
             ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
-            Object.keys(tagPlayers).forEach(id => {
-                let p = tagPlayers[id];
-                ctx.fillStyle = (currentType === 'ttt' && id === myName) ? "cyan" : "white";
-                ctx.fillRect(p.x-10,p.y-10,20,20);
-                ctx.font = "10px monospace"; ctx.fillText(id, p.x-10, p.y-15);
-            });
+            Object.keys(tagPlayers).forEach(id => { let p = tagPlayers[id]; ctx.fillStyle = "white"; ctx.fillRect(p.x-10,p.y-10,20,20); ctx.fillText(id, p.x-10, p.y-15); });
         }
 
         function end() { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; }
