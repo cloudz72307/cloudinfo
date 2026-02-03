@@ -15,7 +15,7 @@
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* RETICLE CURSOR */
+        /* CURSOR */
         #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); animation: rotateCursor 4s linear infinite; }
         @keyframes rotateCursor { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .reticle-part { position: absolute; border: 2px solid #fff; width: 15px; height: 15px; }
@@ -25,10 +25,14 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
+        /* TOP LEFT CORNER UI */
+        .top-left-controls { position: fixed; top: 20px; left: 20px; z-index: 6000; display: flex; flex-direction: column; gap: 10px; }
+        .small-btn { padding: 8px 15px; background: transparent; border: 1px solid #fff; color: #fff; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; transition: 0.2s; }
+        .small-btn:hover { background: #fff; color: #000; }
+
+        /* MAIN UI */
         h1.title { font-size: 100px; letter-spacing: 30px; text-transform: uppercase; font-weight: 900; margin-bottom: 30px; text-align: center; text-shadow: 0 0 20px #fff; z-index: 10; }
-        
         .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 2px solid #fff; padding: 40px; z-index: 5000; text-align: center; }
-        
         .btn-style { width: 100%; max-width: 400px; padding: 18px; border: 2px solid #fff; background: transparent; color: #fff; letter-spacing: 5px; margin: 10px auto; display: flex; justify-content: center; align-items: center; transition: 0.1s; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; text-decoration: none; }
         .btn-style:hover { background: #fff; color: #000; }
 
@@ -41,7 +45,7 @@
         #tag-canvas { background: #050505; border: 5px solid #fff; }
         .tag-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; border: 2px solid #fff; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; }
 
-        /* CHAT WINDOW */
+        /* CHAT */
         #chat-window { display: none; position: fixed; bottom: 30px; left: 30px; width: 320px; height: 400px; background: rgba(0,0,0,0.95); border: 2px solid #fff; z-index: 5500; flex-direction: column; }
         #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.8rem; text-align: left; font-family: monospace; }
         #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 2px solid #fff; }
@@ -56,8 +60,13 @@
         <button class="btn-style" onclick="initApp()">ENTER CLOUDZ</button>
     </div>
 
+    <div class="top-left-controls" id="corner-ui" style="display:none;">
+        <button class="small-btn" onclick="toggleChat()">CHAT</button>
+        <button class="small-btn" onclick="openModal('info-modal')">INFO</button>
+    </div>
+
     <div id="login-modal" class="modal-box" style="display:block;">
-        <h2 style="letter-spacing:10px;">ACCESS</h2><br>
+        <h2 style="letter-spacing:10px;">SYSTEM ACCESS</h2><br>
         <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center; margin-bottom: 10px;">
         <input type="password" id="user-pw" placeholder="PASS" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center; margin-bottom: 20px;">
         <button class="btn-style" onclick="handleAuth()">LOGIN</button>
@@ -65,47 +74,53 @@
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
-        <button class="btn-style c-blurple" onclick="copyDiscord()">DISCORD COPY</button>
+        <button class="btn-style c-blurple" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
         <a href="https://cash.app/$roman479" target="_blank" class="btn-style c-green">CASHAPP</a>
         <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" class="btn-style c-blue">ROBLOX DONATE</a>
         <button class="btn-style" onclick="openModal('games-hub')">GAMES</button>
-        <button class="btn-style" onclick="openModal('info-modal')">INFO</button>
-        <button class="btn-style" onclick="toggleChat()">CHAT</button>
-    </div>
-
-    <div id="admin-panel" class="modal-box">
-        <h2 style="color: red;">ROOT ACCESS</h2><br>
-        <button class="btn-style" onclick="wipeArena()">WIPE TAG ARENA</button>
-        <button class="btn-style" onclick="closeModals()">CLOSE PANEL</button>
     </div>
 
     <div id="games-hub" class="modal-box">
+        <h2 style="letter-spacing:5px;">GAMES</h2>
         <button class="btn-style" style="border-color:#f00; color:#f00;" onclick="toggleTagMode(true)">GLOBAL TAG</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
+        <button class="btn-style" onclick="launchGame('shooter')">SHOOTER</button>
+        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
+        <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
+        <button class="btn-style" onclick="launchGame('ttt')">TIC-TAC-TOE</button>
         <button class="btn-style" onclick="closeModals()">BACK</button>
     </div>
 
-    <div id="info-modal" class="modal-box">
-        <p>CLOUDZ DEV. PYTHON & JS. SUPPORT VIA CASHAPP.</p><br>
+    <div id="admin-panel" class="modal-box">
+        <h2 style="color: red;">ADMIN ROOT</h2><br>
+        <button class="btn-style" onclick="wipeArena()">WIPE ARENA</button>
         <button class="btn-style" onclick="closeModals()">CLOSE</button>
     </div>
 
     <div id="tag-container">
         <div class="tag-close" onclick="toggleTagMode(false)">×</div>
-        <h2 style="margin-bottom: 10px;">GLOBAL ARENA</h2>
+        <div style="margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 2px;">TAGGER: <span id="it-name" style="color:red;">...</span></div>
         <canvas id="tag-canvas" width="1000" height="600"></canvas>
+    </div>
+
+    <div id="info-modal" class="modal-box">
+        <p>CLOUDZ DEV ENVIRONMENT. ADMIN: CLOUDZ!</p><br>
+        <button class="btn-style" onclick="closeModals()">CLOSE</button>
     </div>
 
     <div id="chat-window">
         <div id="chat-history"></div>
-        <input type="text" id="chat-input" placeholder=">>">
+        <input type="text" id="chat-input" placeholder="MESSAGE...">
     </div>
+
+    <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
     <script>
         const firebaseConfig = { databaseURL: "https://cloudzinfo-1f0ec-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", isAdmin = false, players = {}, keys = {};
+        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {};
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
 
@@ -115,34 +130,35 @@
         });
         window.addEventListener('keyup', e => keys[e.code] = false);
         window.addEventListener('mousemove', e => {
-            const cur = document.getElementById('cursor-wrapper');
-            cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+            document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
+            document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
         });
 
         function initApp() {
             document.getElementById('intro-overlay').style.display='none';
+            document.getElementById('bg-music').play().catch(()=>{});
             particlesJS("particles-js", {"particles":{"number":{"value":80},"color":{"value":"#ffffff"},"size":{"value":2},"move":{"enable":true,"speed":1}}});
         }
 
         async function handleAuth() {
             const u = document.getElementById('user-id').value.trim().toUpperCase();
-            const p = document.getElementById('user-pw').value.trim();
             if(!u) return;
-
-            const snap = await db.ref('users/' + u).once('value');
-            if(snap.exists() && snap.val().pw !== p) return alert("WRONG PASS");
-            if(!snap.exists()) await db.ref('users/' + u).set({pw: p});
-
             myUser = u;
             if(u === "CLOUDZ!") isAdmin = true;
-            
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
+            document.getElementById('corner-ui').style.display='flex';
             startChat();
+            
+            // Listen for IT player changes
+            db.ref('globalTag/it').on('value', s => {
+                itPlayer = s.val();
+                document.getElementById('it-name').innerText = itPlayer || "NONE";
+            });
         }
 
         function startChat() {
-            db.ref('chat').limitToLast(15).on('child_added', s => {
+            db.ref('chat').limitToLast(10).on('child_added', s => {
                 const h = document.getElementById('chat-history');
                 h.innerHTML += `<div><b>${s.val().u}:</b> ${s.val().t}</div>`;
                 h.scrollTop = h.scrollHeight;
@@ -168,57 +184,77 @@
             if(on) {
                 db.ref('globalTag/players/' + myUser).set({ x: 500, y: 300, lastSeen: Date.now() });
                 db.ref('globalTag/players/' + myUser).onDisconnect().remove();
+                
+                // Set IT if none exists (first person joins)
+                db.ref('globalTag/it').transaction(current => {
+                    return current === null ? myUser : current;
+                });
+                
                 requestAnimationFrame(tagLoop);
-            } else {
-                db.ref('globalTag/players/' + myUser).remove();
+            } else { 
+                db.ref('globalTag/players/' + myUser).remove(); 
+                handleItLeaving();
+            }
+        }
+
+        function handleItLeaving() {
+            if(itPlayer === myUser) {
+                db.ref('globalTag/players').once('value', s => {
+                    const others = Object.keys(s.val() || {}).filter(id => id !== myUser);
+                    if(others.length > 0) {
+                        const next = others[Math.floor(Math.random() * others.length)];
+                        db.ref('globalTag/it').set(next);
+                    } else {
+                        db.ref('globalTag/it').set(null);
+                    }
+                });
             }
         }
 
         function tagLoop() {
             if (document.getElementById('tag-container').style.display === 'none') return;
-            db.ref('globalTag/players').once('value', s => players = s.val() || {});
-            
+            db.ref('globalTag/players').once('value', s => {
+                players = s.val() || {};
+                // If IT left and wasn't reassigned
+                if(itPlayer && !players[itPlayer]) handleItLeaving();
+            });
+
             let me = players[myUser] || {x:500, y:300};
-            let speed = isAdmin ? 10 : 6;
+            let speed = (isAdmin || itPlayer === myUser) ? 9 : 6;
             
             if(keys['KeyW']) me.y -= speed; if(keys['KeyS']) me.y += speed;
             if(keys['KeyA']) me.x -= speed; if(keys['KeyD']) me.x += speed;
-
-            // Borders
-            me.x = Math.max(20, Math.min(980, me.x));
-            me.y = Math.max(20, Math.min(580, me.y));
-
+            me.x = Math.max(20, Math.min(980, me.x)); me.y = Math.max(20, Math.min(580, me.y));
+            
             db.ref('globalTag/players/' + myUser).update({ x: me.x, y: me.y, lastSeen: Date.now() });
 
             tagCtx.clearRect(0,0,1000,600);
-            tagCtx.strokeStyle = "#fff"; tagCtx.strokeRect(5,5,990,590); // Arena Border
+            tagCtx.strokeStyle = "#fff"; tagCtx.strokeRect(5,5,990,590);
 
             for(let id in players) {
                 let p = players[id];
-                if(Date.now() - p.lastSeen > 10000) continue; 
-                tagCtx.fillStyle = (id === "CLOUDZ!") ? "#ffd700" : "#fff";
+                if(Date.now() - p.lastSeen > 8000) continue;
+                
+                // Tagging logic (Only the IT player can trigger this)
+                if(itPlayer === myUser && id !== myUser) {
+                    let d = Math.hypot(me.x - p.x, me.y - p.y);
+                    if(d < 30) db.ref('globalTag/it').set(id);
+                }
+
+                tagCtx.fillStyle = (id === itPlayer) ? "#f00" : (id === "CLOUDZ!" ? "#ffd700" : "#fff");
                 tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
+                tagCtx.fillStyle = "#fff";
+                tagCtx.font = "10px monospace";
                 tagCtx.fillText(id, p.x - 15, p.y - 20);
             }
             requestAnimationFrame(tagLoop);
         }
 
-        function wipeArena() {
-            if(isAdmin) db.ref('globalTag/players').remove();
-        }
-
-        function openModal(id) {
-            closeModals();
-            document.getElementById(id).style.display = 'block';
-        }
-
-        function closeModals() {
-            ['games-hub', 'info-modal', 'admin-panel'].forEach(m => document.getElementById(m).style.display = 'none');
-        }
-
-        function copyDiscord() {
-            navigator.clipboard.writeText("cloudz.cloud").then(() => alert("COPIED DISCORD"));
-        }
+        function wipeArena() { if(isAdmin) { db.ref('globalTag/players').remove(); db.ref('globalTag/it').set(null); } }
+        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'block'; }
+        function closeModals() { ['games-hub', 'info-modal', 'admin-panel'].forEach(m => document.getElementById(m).style.display = 'none'); }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud").then(() => alert("COPIED")); }
+        function launchGame(t) { alert("Launching " + t + "... (Logic Pending)"); }
     </script>
 </body>
 </html>
