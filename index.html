@@ -75,7 +75,7 @@
         <input type="text" id="username" placeholder="USERNAME" maxlength="12">
         <input type="password" id="password" placeholder="PASSWORD">
         <div class="save-option">
-            <input type="checkbox" id="rememberMe"> <label for="rememberMe">REMEMBER PASS?</label>
+            <input type="checkbox" id="rememberMe" checked> <label for="rememberMe">REMEMBER PASS?</label>
         </div>
         <button class="btn-style" onclick="login()">CONNECT</button>
     </div>
@@ -138,14 +138,12 @@
         window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
         setInterval(() => { rot += 1.5; cur.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`; }, 16);
 
-        // PASSWORD SAVE LOGIC
         window.onload = () => {
             const savedU = localStorage.getItem('c_user');
             const savedP = localStorage.getItem('c_pass');
             if (savedU && savedP) {
                 document.getElementById('username').value = savedU;
                 document.getElementById('password').value = savedP;
-                document.getElementById('rememberMe').checked = true;
             }
         };
 
@@ -188,7 +186,6 @@
         function toggleChat() { let c=document.getElementById('chat-window'); c.style.display=(c.style.display==='flex'?'none':'flex'); }
         document.getElementById('chat-input').onkeydown = e => { if(e.key==='Enter' && e.target.value.trim()){ db.ref('chat').push({u:myName, t:e.target.value}); e.target.value=""; }};
 
-        // ... (Game Logic remains identical to previous versions) ...
         function handleGameClick(e) { if(currentType === 'zombies' && active) { let rect = canvas.getBoundingClientRect(); let angle = Math.atan2((e.clientY-rect.top)-(pY+10), (e.clientX-rect.left)-(pX+10)); bullets.push({x:pX+10, y:pY+10, dx:Math.cos(angle)*7, dy:Math.sin(angle)*7}); } }
         window.onkeydown = e => { keys[e.code] = true; if(currentType === 'snake') { if((e.code==='KeyW'||e.code==='ArrowUp') && sDir!=='D') sDir='U'; if((e.code==='KeyS'||e.code==='ArrowDown') && sDir!=='U') sDir='D'; if((e.code==='KeyA'||e.code==='ArrowLeft') && sDir!=='R') sDir='L'; if((e.code==='KeyD'||e.code==='ArrowRight') && sDir!=='L') sDir='R'; } };
         window.onkeyup = e => keys[e.code] = false;
