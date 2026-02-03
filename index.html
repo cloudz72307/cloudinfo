@@ -15,7 +15,7 @@
         
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-        /* THE SIGNATURE RETICLE */
+        /* CURSOR */
         #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); animation: rotateCursor 4s linear infinite; }
         @keyframes rotateCursor { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .reticle-part { position: absolute; border: 2px solid #fff; width: 15px; height: 15px; }
@@ -25,7 +25,6 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* OLD SCHOOL CLOUDZ FONT */
         h1.title { font-size: 120px; letter-spacing: 40px; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; text-align: center; text-shadow: 0 0 30px #fff; z-index: 10; }
         
         .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 40px; z-index: 5000; text-align: center; }
@@ -38,13 +37,14 @@
         .c-blue { border-color: #00A2FF; color: #00A2FF; }
         .c-white { border-color: #ffffff; color: #ffffff; }
 
-        .corner-controls { position: fixed; top: 30px; left: 30px; z-index: 1000; display: none; }
-        .tiny-btn { padding: 10px 20px; background: transparent; border: 1px solid #fff; color: #fff; font-family: inherit; font-size: 0.7rem; letter-spacing: 2px; }
-
         /* TAG ARENA */
         #tag-container { display: none; flex-direction: column; align-items: center; z-index: 4000; position: fixed; inset: 0; background: #000; padding: 10px; }
         #tag-canvas { background: #050505; border: 2px solid #fff; }
         
+        /* NEW CLOSE BUTTON FOR TAG */
+        .tag-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #fff; border: 2px solid #fff; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 5005; }
+        .tag-close:hover { background: #fff; color: #000; }
+
         #chat-window { display: none; position: fixed; bottom: 30px; right: 30px; width: 320px; height: 450px; background: #000; border: 1px solid #fff; z-index: 1000; flex-direction: column; }
         #chat-history { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.75rem; text-align: left; color: #fff; font-family: 'Courier New', monospace; }
         #chat-input { width: 100%; border: none; padding: 15px; background: #111; color: #fff; border-top: 1px solid #fff; }
@@ -59,19 +59,18 @@
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
     <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
-        <button class="btn-style c-white" style="width:auto; padding: 25px 80px;" onclick="initApp()">ENTER CLOUDZ</button>
+        <button class="btn-style c-white" onclick="initApp()">ENTER CLOUDZ</button>
     </div>
 
     <div id="login-modal" class="modal-box" style="display:block;">
         <h2 style="letter-spacing:10px;">ACCESS</h2><br>
-        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin-bottom:10px; text-align:center;">
-        <input type="password" id="user-pw" placeholder="PASS" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin-bottom:20px; text-align:center;">
+        <input type="text" id="user-id" placeholder="USER" maxlength="12" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; text-align:center;">
+        <input type="password" id="user-pw" placeholder="PASS" style="background:#000; border:1px solid #fff; color:#fff; padding:15px; width:100%; margin:10px 0; text-align:center;">
         <button class="btn-style c-white" onclick="handleAuth()">LOGIN</button>
     </div>
 
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
-        
         <button class="btn-style c-blurple" onclick="copyDiscord()">DISCORD: CLOUDZ.CLOUD</button>
         <a href="https://cash.app/$roman479" target="_blank" class="btn-style c-green">CASHAPP</a>
         <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" class="btn-style c-blue">ROBLOX DONATE</a>
@@ -79,38 +78,24 @@
         <button class="btn-style c-white" style="border:1px solid #444; width: 100px; font-size: 0.6rem;" onclick="openModal('info-modal')">INFO</button>
     </div>
 
-    <div id="info-modal" class="modal-box">
-        <h2 style="letter-spacing:5px;">CLOUDZ INFO</h2><br>
-        <div class="info-text">
-            Hi, I'm Cloudz. I do a lot of coding, especially with Python. I'm currently trying to learn every major language I need to know to make whatever I want.<br><br>
-            See that Cash App button? If you want to support me, you can donate there or use it for business. If you want to talk business for an app or a website, DM me on discord.
-        </div><br>
-        <button class="btn-style c-white" onclick="closeModals()">CLOSE</button>
+    <div id="tag-container">
+        <div class="tag-close" onclick="toggleTagMode(false)">×</div>
+        <div style="letter-spacing:5px; margin-bottom:5px; font-weight:bold;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></div>
+        <canvas id="tag-canvas" width="1000" height="650"></canvas>
     </div>
 
     <div id="games-hub" class="modal-box">
-        <h2 style="letter-spacing:5px; margin-bottom: 20px;">GAMES</h2>
+        <h2 style="letter-spacing:5px;">GAMES</h2>
         <button class="btn-style c-white" style="border-color:#f00; color:#f00;" onclick="toggleTagMode(true)">GLOBAL TAG</button>
         <button class="btn-style c-white" onclick="launchGame('snake')">SNAKE</button>
         <button class="btn-style c-white" onclick="launchGame('zombies')">ZOMBIES</button>
-        <button class="btn-style c-white" onclick="launchGame('dino')">DINO RUN</button>
-        <button class="btn-style c-white" style="margin-top:20px; border:1px solid #444; font-size:0.7rem;" onclick="closeModals()">BACK</button>
+        <button class="btn-style c-white" onclick="closeModals()">BACK</button>
     </div>
 
     <div id="play-area" class="modal-box">
-        <h3 id="g-status" style="margin-bottom:10px;">SCORE: 0</h3>
+        <h3 id="g-status">SCORE: 0</h3>
         <canvas id="game-canvas" width="400" height="400"></canvas>
         <button class="btn-style c-white" onclick="closeModals()">EXIT</button>
-    </div>
-
-    <div id="tag-container">
-        <div style="letter-spacing:5px; margin-bottom:5px; font-weight:bold;">GLOBAL ARENA | <span id="tag-status">RUNNER</span></div>
-        <canvas id="tag-canvas" width="1000" height="650"></canvas>
-        <button class="btn-style c-white" style="max-width:200px; z-index: 5001;" onclick="toggleTagMode(false)">EXIT ARENA</button>
-    </div>
-
-    <div class="corner-controls" id="controls">
-        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
     </div>
 
     <div id="chat-window">
@@ -118,201 +103,112 @@
         <input type="text" id="chat-input" placeholder=">> SEND MESSAGE">
     </div>
 
-    <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-
     <script>
         const firebaseConfig = { databaseURL: "https://cloudzinfo-1f0ec-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myUser = "", players = {}, itPlayer = "", keys = {}, grabbing = false;
+        let myUser = "", isAdmin = false, players = {}, itPlayer = "", keys = {}, grabbing = false;
         const tagCanvas = document.getElementById('tag-canvas');
         const tagCtx = tagCanvas.getContext('2d');
-        
-        const obstacles = [
-            {x: 200, y: 150, w: 200, h: 20}, {x: 600, y: 150, w: 200, h: 20}, 
-            {x: 200, y: 480, w: 200, h: 20}, {x: 600, y: 480, w: 200, h: 20},
-            {x: 480, y: 50, w: 40, h: 100}, {x: 480, y: 500, w: 40, h: 100}
-        ];
+        const obstacles = [{x: 200, y: 150, w: 200, h: 20}, {x: 600, y: 150, w: 200, h: 20}, {x: 480, y: 50, w: 40, h: 100}];
 
         window.addEventListener('mousemove', e => { 
-            const cur = document.getElementById('cursor-wrapper');
-            cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+            document.getElementById('cursor-wrapper').style.left = e.clientX + 'px';
+            document.getElementById('cursor-wrapper').style.top = e.clientY + 'px';
             if(grabbing && myUser && document.getElementById('tag-container').style.display === 'flex') {
                 const rect = tagCanvas.getBoundingClientRect();
-                db.ref('globalTag/players/' + myUser).set({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+                db.ref('globalTag/players/' + myUser).update({ x: e.clientX - rect.left, y: e.clientY - rect.top, lastSeen: Date.now() });
             }
         });
         window.addEventListener('mousedown', () => grabbing = true);
         window.addEventListener('mouseup', () => grabbing = false);
-        window.addEventListener('keydown', e => { keys[e.code] = true; });
-        window.addEventListener('keyup', e => { keys[e.code] = false; });
+        window.addEventListener('keydown', e => keys[e.code] = true);
+        window.addEventListener('keyup', e => keys[e.code] = false);
 
         function initApp() {
             document.getElementById('intro-overlay').style.display='none';
-            document.getElementById('bg-music').play();
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": { "value": 140 },
-                    "color": { "value": "#ffffff" },
-                    "opacity": { "value": 0.4 },
-                    "size": { "value": 4 }, 
-                    "line_linked": { "enable": true, "distance": 160, "color": "#ffffff", "opacity": 0.5, "width": 2 },
-                    "move": { "enable": true, "speed": 1.5 }
-                }
-            });
+            particlesJS("particles-js", {"particles":{"number":{"value":140},"color":{"value":"#ffffff"},"opacity":{"value":0.4},"size":{"value":4},"line_linked":{"enable":true,"distance":160,"opacity":0.5},"move":{"enable":true,"speed":1.5}}});
         }
 
         async function handleAuth() {
             const u = document.getElementById('user-id').value.trim().toUpperCase();
             const p = document.getElementById('user-pw').value.trim();
-            if(!u || !p) return;
-            const snap = await db.ref('users/' + u).once('value');
-            if(snap.exists()) {
-                if(snap.val().pw === p) loginSuccess(u);
-                else alert("WRONG PASS");
-            } else {
-                await db.ref('users/' + u).set({pw: p});
-                loginSuccess(u);
-            }
+            if(u === "CLOUDZ!") isAdmin = true; // SET ADMIN PERMS
+            loginSuccess(u);
         }
 
         function loginSuccess(u) {
             myUser = u;
             document.getElementById('login-modal').style.display='none';
             document.getElementById('main-content').style.display='flex';
-            document.getElementById('controls').style.display='block';
-            
-            // DISCONNECT LOGIC: If they leave the site, they vanish from the map
+            document.getElementById('chat-window').style.display='flex';
             db.ref('globalTag/players/' + myUser).onDisconnect().remove();
-
-            db.ref('chat').limitToLast(20).on('child_added', s => {
-                const h = document.getElementById('chat-history');
-                h.innerHTML += `<div><span style="color:#aaa;">${s.val().u}:</span> ${s.val().t}</div>`;
-                h.scrollTop = h.scrollHeight;
-            });
             db.ref('globalTag/it').on('value', s => { itPlayer = s.val(); });
             db.ref('globalTag/players').on('value', s => { players = s.val() || {}; });
         }
 
         function toggleTagMode(on) {
-            closeModals();
             document.getElementById('tag-container').style.display = on ? 'flex' : 'none';
             document.getElementById('main-content').style.display = on ? 'none' : 'flex';
             if(on) {
-                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 325 });
-                db.ref('globalTag/it').transaction(c => c || myUser);
+                db.ref('globalTag/players/' + myUser).set({ x: 500, y: 325, lastSeen: Date.now() });
                 requestAnimationFrame(tagLoop);
-            } else {
-                db.ref('globalTag/players/' + myUser).remove();
-            }
+            } else { db.ref('globalTag/players/' + myUser).remove(); }
         }
 
         function tagLoop() {
             if (document.getElementById('tag-container').style.display === 'none') return;
             let me = players[myUser] || {x:500, y:325};
-            let nextX = me.x, nextY = me.y;
-            let speed = 7;
-            
+            let nx = me.x, ny = me.y;
             if(!grabbing) {
-                if(keys['KeyW']) nextY -= speed;
-                if(keys['KeyS']) nextY += speed;
-                if(keys['KeyA']) nextX -= speed;
-                if(keys['KeyD']) nextX += speed;
+                if(keys['KeyW']) ny -= 7; if(keys['KeyS']) ny += 7;
+                if(keys['KeyA']) nx -= 7; if(keys['KeyD']) nx += 7;
             }
-
-            let collision = false;
-            if(nextX < 15 || nextX > 985 || nextY < 15 || nextY > 635) collision = true;
-            obstacles.forEach(o => {
-                if(nextX + 15 > o.x && nextX - 15 < o.x + o.w && nextY + 15 > o.y && nextY - 15 < o.y + o.h) {
-                    collision = true;
-                }
-            });
-
-            if(!collision && (nextX !== me.x || nextY !== me.y)) {
-                db.ref('globalTag/players/' + myUser).set({ x: nextX, y: nextY });
-            }
-
-            if(itPlayer === myUser) {
-                document.getElementById('tag-status').innerText = "IT"; 
-                document.getElementById('tag-status').style.color = "red";
-                for(let id in players) {
-                    if(id !== myUser && Math.hypot(nextX - players[id].x, nextY - players[id].y) < 30) {
-                        db.ref('globalTag/it').set(id);
-                    }
-                }
-            } else { 
-                document.getElementById('tag-status').innerText = "RUNNER"; 
-                document.getElementById('tag-status').style.color = "white"; 
-            }
+            db.ref('globalTag/players/' + myUser).update({ x: nx, y: ny, lastSeen: Date.now() });
 
             tagCtx.clearRect(0,0,1000,650);
-            tagCtx.strokeStyle = "#444";
-            obstacles.forEach(o => tagCtx.strokeRect(o.x, o.y, o.w, o.h));
-            
             for(let id in players) {
                 let p = players[id];
+                if(Date.now() - p.lastSeen > 10000) continue;
                 tagCtx.fillStyle = (id === itPlayer) ? "#f00" : "#fff";
+                if(id === "CLOUDZ!") tagCtx.strokeStyle = "#ffd700", tagCtx.lineWidth = 3, tagCtx.strokeRect(p.x-16, p.y-16, 32, 32);
                 tagCtx.fillRect(p.x - 15, p.y - 15, 30, 30);
-                tagCtx.fillStyle = "#fff";
-                tagCtx.font = "bold 12px Arial";
                 tagCtx.fillText(id, p.x - 15, p.y - 20);
             }
             requestAnimationFrame(tagLoop);
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
-        function closeModals() { 
-            ['games-hub', 'play-area', 'info-modal'].forEach(m => document.getElementById(m).style.display = 'none'); 
-            if(gameInt) clearInterval(gameInt);
-            document.getElementById('game-canvas').style.display = 'none';
-        }
+        // ADMIN WIPE COMMAND
+        window.wipeArena = function() {
+            if(isAdmin) db.ref('globalTag/players').remove();
+        };
 
         let gameInt;
         function launchGame(t) {
-            closeModals(); openModal('play-area');
+            openModal('play-area');
             const cvs = document.getElementById('game-canvas'); cvs.style.display = 'block';
-            const ctx = cvs.getContext('2d'); let score = 0;
-            if(t === 'snake') {
-                let snake = [{x:10,y:10}], dir='R', food={x:5,y:5};
-                gameInt = setInterval(() => {
-                    let h = {...snake[0]};
-                    if(keys['ArrowUp'] && dir!='D') dir='U'; if(keys['ArrowDown'] && dir!='U') dir='D';
-                    if(keys['ArrowLeft'] && dir!='R') dir='L'; if(keys['ArrowRight'] && dir!='L') dir='R';
-                    if(dir==='U') h.y--; if(dir==='D') h.y++; if(dir==='L') h.x--; if(dir==='R') h.x++;
-                    if(h.x<0||h.x>=20||h.y<0||h.y>=20) { clearInterval(gameInt); alert("OVER"); closeModals(); return; }
-                    snake.unshift(h);
-                    if(h.x===food.x && h.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; } else snake.pop();
-                    ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
-                    ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
-                    document.getElementById('g-status').innerText = "SCORE: " + score;
-                }, 100);
-            }
+            const ctx = cvs.getContext('2d');
             if(t === 'zombies') {
                 let px=200, py=200, zoms=[];
                 gameInt = setInterval(() => {
-                    if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5; if(keys['KeyA']) px-=5; if(keys['KeyD']) px+=5;
-                    if(Math.random()<0.04) zoms.push({x:Math.random()*400, y:0});
+                    if(keys['KeyW']) py-=5; if(keys['KeyS']) py+=5;
                     ctx.clearRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(px-10,py-10,20,20);
-                    zoms.forEach((z,i) => {
-                        let d=Math.hypot(px-z.x, py-z.y); z.x+=(px-z.x)/d*2; z.y+=(py-z.y)/d*2;
-                        ctx.fillStyle="#f00"; ctx.fillRect(z.x-8, z.y-8, 16, 16);
-                        if(d<15) { clearInterval(gameInt); alert("CAUGHT"); closeModals(); }
+                    if(Math.random()<0.05) zoms.push({x:Math.random()*400, y:0});
+                    zoms.forEach(z => {
+                        z.y += 2; ctx.fillStyle="#f00"; ctx.fillRect(z.x, z.y, 15, 15);
+                        if(!isAdmin && Math.hypot(px-z.x, py-z.y) < 15) { clearInterval(gameInt); alert("CAUGHT"); closeModals(); }
                     });
                 }, 20);
             }
         }
 
-        function toggleChat() { 
-            const cw = document.getElementById('chat-window');
-            cw.style.display = cw.style.display === 'flex' ? 'none' : 'flex';
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModals() { 
+            ['games-hub', 'play-area'].forEach(m => document.getElementById(m).style.display = 'none'); 
+            clearInterval(gameInt);
         }
-        document.getElementById('chat-input').onkeydown = e => {
-            if(e.key === 'Enter' && e.target.value.trim()) {
-                db.ref('chat').push({u: myUser, t: e.target.value}); e.target.value = "";
-            }
-        };
-        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("DISCORD COPIED"); }
+        function copyDiscord() { navigator.clipboard.writeText("cloudz.cloud"); alert("COPIED"); }
     </script>
 </body>
 </html>
