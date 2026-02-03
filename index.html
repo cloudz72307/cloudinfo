@@ -11,8 +11,9 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#00A2FF">
 
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="manifest" href="./site.webmanifest">
 
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -22,7 +23,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; outline: none; }
         body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         
-        /* CUSTOM CURSOR */
         #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); }
         .reticle-part { position: absolute; border: 1.5px solid #fff; width: 15px; height: 15px; }
         #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
@@ -31,7 +31,6 @@
         #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
         #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* UI ELEMENTS */
         h1.title { font-size: clamp(3rem, 10vw, 6rem); letter-spacing: 12px; text-transform: uppercase; font-weight: 900; margin-bottom: 25px; text-align: center; color: #fff; text-shadow: 0 0 15px #fff; animation: white-glow 2s infinite alternate; }
         @keyframes white-glow { from { opacity: 0.8; } to { opacity: 1; text-shadow: 0 0 30px #fff; } }
         
@@ -54,20 +53,18 @@
 
         #chat-window { display: none; position: fixed; bottom: 80px; left: 20px; width: 300px; height: 350px; background: rgba(0,0,0,0.95); border: 1px solid #fff; z-index: 1000; flex-direction: column; }
         #chat-history { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
-        #chat-input { width: 100%; border: none; padding: 10px; text-align: left; background: #000; color: #fff; }
+        #chat-input { width: 100%; border: none; padding: 10px; text-align: left; background: #000; color: #fff; border-top: 1px solid #333; }
 
+        #game-canvas { background: #000; border: 1px solid #333; display: none; margin: 10px auto; }
         .corner-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: none; flex-direction: column; gap: 10px; }
-        .tiny-btn { width: 90px; padding: 8px; font-size: 0.7rem; }
         #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-        
-        /* USER COUNTER */
-        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; text-shadow: 0 0 8px #0f0; font-weight: bold; display: none; }
+        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; text-shadow: 0 0 8px #0f0; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
-    <div id="live-counter">LIVE: 0 USERS</div>
+    <div id="live-counter" style="display:none;">LIVE: 0 USERS</div>
 
     <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
 
@@ -92,6 +89,20 @@
         <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
     </div>
 
+    <div id="info-modal" class="modal-box">
+        <button style="float:right; background:none; border:none; color:white; font-size: 1.2rem;" onclick="this.parentElement.style.display='none'">[X]</button>
+        <h2 style="margin-bottom:15px;">CLOUDZ INFO</h2>
+        <div style="text-align:left; font-size:0.85rem; line-height:1.6;">
+            <p>Hi, I'm Cloudz. I code in Python and I'm learning everything I can to build cool stuff.</p><br>
+            <p>Donations via Cash App or Robux help me keep the site running. DM me on Discord for business or just to chat.</p>
+        </div>
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-history"></div>
+        <input type="text" id="chat-input" placeholder="Type message...">
+    </div>
+
     <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
         <h1 class="title">Cloudz</h1>
         <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: hellothere.33</button>
@@ -113,7 +124,7 @@
         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
             <span id="g-name">GAME</span><span id="g-score">0</span>
         </div>
-        <canvas id="game-canvas" width="400" height="400" onmousedown="handleGameClick(event)"></canvas>
+        <canvas id="game-canvas" width="400" height="400"></canvas>
         <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
         <button class="btn-style" onclick="quitGame()">EXIT</button>
     </div>
@@ -132,6 +143,10 @@
         window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
         setInterval(() => { rot += 1.5; cur.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`; }, 16);
 
+        // FIXED INPUT HANDLING
+        window.addEventListener('keydown', e => { keys[e.code] = true; });
+        window.addEventListener('keyup', e => { keys[e.code] = false; });
+
         window.onload = () => {
             const savedU = localStorage.getItem('c_user');
             const savedP = localStorage.getItem('c_pass');
@@ -149,18 +164,12 @@
 
         function login() {
             myName = document.getElementById('username').value.trim();
-            let myPass = document.getElementById('password').value;
             if(!myName) return;
-            
             if(document.getElementById('rememberMe').checked) {
                 localStorage.setItem('c_user', myName);
-                localStorage.setItem('c_pass', myPass);
-            } else {
-                localStorage.removeItem('c_user');
-                localStorage.removeItem('c_pass');
+                localStorage.setItem('c_pass', document.getElementById('password').value);
             }
-
-            // USER COUNT TRACKING
+            
             const userRef = db.ref('online/' + myName);
             userRef.set(true);
             userRef.onDisconnect().remove();
@@ -177,43 +186,91 @@
             
             db.ref('chat').limitToLast(20).on('child_added', s => {
                 const h = document.getElementById('chat-history'); const v = s.val();
-                h.innerHTML += `<div><span style="color:hsl(${v.u.length*30},70%,70%)">${v.u}:</span> ${v.t}</div>`;
+                h.innerHTML += `<div><span style="color:#0f0">${v.u}:</span> ${v.t}</div>`;
                 h.scrollTop = h.scrollHeight;
             });
         }
 
         function copyDiscord() {
-            const btn = document.getElementById('btn-discord');
             navigator.clipboard.writeText("hellothere.33");
-            btn.innerText = "COPIED";
-            setTimeout(() => { btn.innerText = "DISCORD: hellothere.33"; }, 2000);
+            document.getElementById('btn-discord').innerText = "COPIED";
+            setTimeout(() => { document.getElementById('btn-discord').innerText = "DISCORD: hellothere.33"; }, 2000);
         }
 
-        function toggleChat() { let c=document.getElementById('chat-window'); c.style.display=(c.style.display==='flex'?'none':'flex'); }
-        document.getElementById('chat-input').onkeydown = e => { if(e.key==='Enter' && e.target.value.trim()){ db.ref('chat').push({u:myName, t:e.target.value}); e.target.value=""; }};
+        function toggleChat() { 
+            let c = document.getElementById('chat-window'); 
+            c.style.display = (c.style.display === 'flex' ? 'none' : 'flex'); 
+        }
 
-        // GAMES LOGIC (STUBBED FOR SPACE - PREVIOUS LOGIC REMAINS)
-        function handleGameClick(e) { if(currentType === 'zombies' && active) { let rect = canvas.getBoundingClientRect(); let angle = Math.atan2((e.clientY-rect.top)-(pY+10), (e.clientX-rect.left)-(pX+10)); bullets.push({x:pX+10, y:pY+10, dx:Math.cos(angle)*7, dy:Math.sin(angle)*7}); } }
-        window.onkeydown = e => { keys[e.code] = true; if(currentType === 'snake') { if((e.code==='KeyW'||e.code==='ArrowUp') && sDir!=='D') sDir='U'; if((e.code==='KeyS'||e.code==='ArrowDown') && sDir!=='U') sDir='D'; if((e.code==='KeyA'||e.code==='ArrowLeft') && sDir!=='R') sDir='L'; if((e.code==='KeyD'||e.code==='ArrowRight') && sDir!=='L') sDir='R'; } };
-        window.onkeyup = e => keys[e.code] = false;
-        function launchGame(t) { currentType = t; active = true; score = 0; document.getElementById('games-hub').style.display='none'; document.getElementById('play-area').style.display='block'; canvas.style.display = 'block'; document.getElementById('retry-btn').style.display='none'; document.getElementById('g-name').textContent = t.toUpperCase(); document.getElementById('g-score').innerText = "0"; if(gameLoop) clearInterval(gameLoop); if(t==='snake') { snake=[{x:10,y:10},{x:9,y:10}]; sDir='R'; food={x:15,y:10}; gameLoop=setInterval(doSnake, 100); } if(t==='dino') { pY=350; pDY=0; obs=[]; gameLoop=setInterval(doDino, 20); } if(t==='zombies') { pX=200; pY=200; zoms=[]; bullets=[]; gameLoop=setInterval(doZoms, 20); } if(t==='tag') { db.ref('online').on('value', s => tagPlayers = s.val() || {}); gameLoop=setInterval(doTag, 20); } }
-        function doSnake() { let head = {...snake[0]}; if(sDir==='U') head.y--; if(sDir==='D') head.y++; if(sDir==='L') head.x--; if(sDir==='R') head.x++; if(head.x<0||head.x>=20||head.y<0||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)) return end(); snake.unshift(head); if(head.x===food.x && head.y===food.y) { score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; document.getElementById('g-score').innerText=score; } else snake.pop(); ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18)); ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18); }
-        function doDino() { pDY+=1; pY+=pDY; if(pY>350){ pY=350; pDY=0; } if(keys['Space'] && pY===350) pDY=-15; if(Math.random()<0.02) obs.push({x:400, w:20, h:30}); ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#fff"; ctx.fillRect(50,pY,30,30); obs.forEach((o,i)=>{ o.x-=5; ctx.fillRect(o.x,400-o.h,o.w,o.h); if(o.x<80&&o.x>20&&pY>370-o.h) end(); }); }
-        function doZoms() { if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3; if(Math.random()<0.03) { let edge = Math.floor(Math.random()*4); let zX, zY; if(edge===0){zX=Math.random()*400; zY=-20;} else if(edge===1){zX=420; zY=Math.random()*400;} else if(edge===2){zX=Math.random()*400; zY=420;} else {zX=-20; zY=Math.random()*400;} zoms.push({x:zX, y:zY}); } ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); ctx.fillStyle="#00f"; ctx.fillRect(pX,pY,20,20); bullets.forEach((b,i)=>{ b.x+=b.dx; b.y+=b.dy; ctx.fillStyle="#fff"; ctx.fillRect(b.x-2,b.y-2,4,4); if(b.x<0||b.x>400||b.y<0||b.y>400) bullets.splice(i,1); }); zoms.forEach((z,zi)=>{ let dx=pX-z.x, dy=pY-z.y, dist=Math.hypot(dx,dy); z.x+=dx/dist*1.5; z.y+=dy/dist*1.5; ctx.fillStyle="#0f0"; ctx.fillRect(z.x-8,z.y-8,16,16); if(dist<15) end(); bullets.forEach((b,bi)=>{ if(Math.hypot(b.x-z.x, b.y-z.y)<15){ zoms.splice(zi,1); bullets.splice(bi,1); score++; document.getElementById('g-score').innerText=score; }}); }); }
-        function doTag() { ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400); if(keys['KeyW']) pY-=4; if(keys['KeyS']) pY+=4; if(keys['KeyA']) pX-=4; if(keys['KeyD']) pX+=4; db.ref('online/'+myName).update({x:pX, y:pY}); Object.keys(tagPlayers).forEach(id => { let p = tagPlayers[id]; ctx.fillStyle = p.it ? "red" : "white"; ctx.fillRect(p.x-8, p.y-8, 16, 16); }); }
+        document.getElementById('chat-input').onkeydown = e => { 
+            if(e.key==='Enter' && e.target.value.trim()){ 
+                db.ref('chat').push({u:myName, t:e.target.value}); 
+                e.target.value=""; 
+            }
+        };
+
+        // GAMES
+        function launchGame(t) {
+            currentType = t; active = true; score = 0;
+            document.getElementById('games-hub').style.display='none';
+            document.getElementById('play-area').style.display='block';
+            canvas.style.display = 'block';
+            document.getElementById('retry-btn').style.display='none';
+            document.getElementById('g-score').innerText = "0";
+            if(gameLoop) clearInterval(gameLoop);
+
+            if(t==='snake') { snake=[{x:10,y:10}]; sDir='R'; food={x:15,y:10}; gameLoop=setInterval(doSnake, 100); }
+            if(t==='dino') { pY=350; pDY=0; obs=[]; gameLoop=setInterval(doDino, 20); }
+            if(t==='zombies') { pX=200; pY=200; zoms=[]; bullets=[]; gameLoop=setInterval(doZoms, 20); }
+            if(t==='tag') { db.ref('online_pos').on('value', s => tagPlayers = s.val() || {}); gameLoop=setInterval(doTag, 20); }
+        }
+
+        function doSnake() {
+            if(keys['KeyW'] && sDir!=='D') sDir='U'; if(keys['KeyS'] && sDir!=='U') sDir='D';
+            if(keys['KeyA'] && sDir!=='R') sDir='L'; if(keys['KeyD'] && sDir!=='L') sDir='R';
+            let head = {...snake[0]};
+            if(sDir==='U') head.y--; if(sDir==='D') head.y++; if(sDir==='L') head.x--; if(sDir==='R') head.x++;
+            if(head.x<0||head.x>=20||head.y<0||head.y>=20) return end();
+            snake.unshift(head);
+            if(head.x===food.x && head.y===food.y) {
+                score++; food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+                document.getElementById('g-score').innerText=score;
+            } else snake.pop();
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle="#0f0"; snake.forEach(s=>ctx.fillRect(s.x*20,s.y*20,18,18));
+            ctx.fillStyle="#f00"; ctx.fillRect(food.x*20,food.y*20,18,18);
+        }
+
+        function doDino() {
+            if(keys['Space'] && pY===350) pDY=-15;
+            pDY+=0.8; pY+=pDY; if(pY>350){ pY=350; pDY=0; }
+            if(Math.random()<0.02) obs.push({x:400, w:20, h:30});
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle="#fff"; ctx.fillRect(50,pY,30,30);
+            obs.forEach((o,i)=>{ 
+                o.x-=6; ctx.fillRect(o.x,400-o.h,o.w,o.h); 
+                if(o.x<80&&o.x>20&&pY>370-o.h) end(); 
+            });
+        }
+
+        function doZoms() {
+            if(keys['KeyW']) pY-=3; if(keys['KeyS']) pY+=3; if(keys['KeyA']) pX-=3; if(keys['KeyD']) pX+=3;
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            ctx.fillStyle="#00f"; ctx.fillRect(pX,pY,20,20);
+        }
+
+        function doTag() {
+            if(keys['KeyW']) pY-=4; if(keys['KeyS']) pY+=4; if(keys['KeyA']) pX-=4; if(keys['KeyD']) pX+=4;
+            db.ref('online_pos/'+myName).set({x:pX, y:pY});
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,400,400);
+            Object.values(tagPlayers).forEach(p => { ctx.fillStyle="white"; ctx.fillRect(p.x,p.y,15,15); });
+        }
+
         function end() { active=false; clearInterval(gameLoop); document.getElementById('retry-btn').style.display='block'; }
         function retryGame() { launchGame(currentType); }
         function quitGame() { clearInterval(gameLoop); active=false; document.getElementById('play-area').style.display='none'; document.getElementById('main-content').style.display='flex'; }
 
-        particlesJS("particles-js", { 
-            "particles": { 
-                "number": { "value": 160, "density": { "enable": true, "value_area": 800 } }, 
-                "size": { "value": 1.2 }, 
-                "line_linked": { "enable": true, "distance": 130, "opacity": 0.2 }, 
-                "move": { "enable": true, "speed": 0.5 } 
-            },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
-        });
+        particlesJS("particles-js", { "particles": { "number": { "value": 100 }, "size": { "value": 1.5 }, "line_linked": { "enable": true, "opacity": 0.1 }, "move": { "speed": 0.5 } } });
     </script>
 </body>
 </html>
