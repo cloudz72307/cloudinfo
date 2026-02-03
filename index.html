@@ -1,4 +1,124 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>CLOUDZZZ!!!</title>
+    <meta property="og:title" content="CLOUDZZZ!!!">
+    <meta property="og:description" content="this is my website... do you like it? it has my info about me (you prob dont need it unless u want a cool website) it has my uh cashapp, discod and uhhhhh roblox to donate to..... also i made games in it... they are kinda buggy but please play them 🥺">
+    <meta property="og:image" content="https://i.ibb.co/v4m0YvL/image-631268.png">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#00A2FF">
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="manifest" href="site.webmanifest">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none !important; outline: none; }
+        body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
+        
+        /* CUSTOM CURSOR */
+        #cursor-wrapper { position: fixed; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transform: translate(-50%, -50%); }
+        .reticle-part { position: absolute; border: 1.5px solid #fff; width: 15px; height: 15px; }
+        #reticle-top-left { top: -12px; left: -12px; border-right: none; border-bottom: none; }
+        #reticle-top-right { top: -12px; right: -12px; border-left: none; border-bottom: none; }
+        #reticle-bottom-left { bottom: -12px; left: -12px; border-right: none; border-top: none; }
+        #reticle-bottom-right { bottom: -12px; right: -12px; border-left: none; border-top: none; }
+        #cursor-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* UI ELEMENTS */
+        h1.title { font-size: clamp(3rem, 10vw, 6rem); letter-spacing: 12px; text-transform: uppercase; font-weight: 900; margin-bottom: 25px; text-align: center; color: #fff; text-shadow: 0 0 15px #fff; animation: white-glow 2s infinite alternate; }
+        @keyframes white-glow { from { opacity: 0.8; } to { opacity: 1; text-shadow: 0 0 30px #fff; } }
+        
+        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 95vw; background: rgba(0,0,0,0.98); border: 1px solid #fff; padding: 30px; z-index: 5000; text-align: center; }
+        
+        .btn-style, .tiny-btn { 
+            width: 100%; max-width: 300px; padding: 12px; border: 1px solid #fff; background: rgba(0,0,0,0.5); 
+            color: #fff; letter-spacing: 2px; margin: 10px auto; display: block; transition: 0.3s; 
+            font-family: inherit; font-weight: bold; text-align: center; text-decoration: none;
+        }
+        .btn-style:hover, .tiny-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff, 0 0 40px rgba(255,255,255,0.5); transform: scale(1.02); }
+
+        #btn-discord { border-color: #5865F2; color: #5865F2; }
+        #btn-cashapp { border-color: #00D632; color: #00D632; }
+        #btn-robux { border-color: #00A2FF; color: #00A2FF; }
+        
+        input { background: #000; border: 1px solid #fff; color: #fff; padding: 12px; width: 100%; max-width: 300px; text-align: center; margin-bottom: 10px; font-family: inherit; }
+        .save-option { font-size: 0.8rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .save-option input { width: 15px; margin: 0; }
+
+        #chat-window { display: none; position: fixed; bottom: 80px; left: 20px; width: 300px; height: 350px; background: rgba(0,0,0,0.95); border: 1px solid #fff; z-index: 1000; flex-direction: column; }
+        #chat-history { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
+        #chat-input { width: 100%; border: none; padding: 10px; text-align: left; background: #000; color: #fff; }
+
+        .corner-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: none; flex-direction: column; gap: 10px; }
+        .tiny-btn { width: 90px; padding: 8px; font-size: 0.7rem; }
+        #particles-js { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        
+        /* USER COUNTER */
+        #live-counter { position: fixed; top: 20px; right: 20px; font-size: 0.9rem; color: #0f0; z-index: 2000; text-shadow: 0 0 8px #0f0; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+    <div id="live-counter">LIVE: 0 USERS</div>
+
+    <div id="cursor-wrapper"><div class="reticle-part" id="reticle-top-left"></div><div class="reticle-part" id="reticle-top-right"></div><div class="reticle-part" id="reticle-bottom-left"></div><div class="reticle-part" id="reticle-bottom-right"></div><div id="cursor-dot"></div></div>
+
+    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
+
+    <div id="intro-overlay" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; justify-content:center; align-items:center;">
+        <div class="btn-style" style="width: auto; padding: 20px 40px;" onclick="startSystem()">ENTER SYSTEM</div>
+    </div>
+
+    <div id="auth-modal" class="modal-box">
+        <h2>LOGIN/REGISTER</h2><br>
+        <input type="text" id="username" placeholder="USERNAME" maxlength="12">
+        <input type="password" id="password" placeholder="PASSWORD">
+        <div class="save-option">
+            <input type="checkbox" id="rememberMe" checked> <label for="rememberMe">REMEMBER PASS?</label>
+        </div>
+        <button class="btn-style" onclick="login()">CONNECT</button>
+    </div>
+
+    <div class="corner-controls" id="controls">
+        <button class="tiny-btn" onclick="document.getElementById('info-modal').style.display='block'">INFO</button>
+        <button class="tiny-btn" onclick="toggleChat()">CHAT</button>
+    </div>
+
+    <div id="main-content" style="display:none; flex-direction:column; align-items:center; z-index:10;">
+        <h1 class="title">Cloudz</h1>
+        <button id="btn-discord" class="btn-style" onclick="copyDiscord()">DISCORD: hellothere.33</button>
+        <a href="https://cash.app/$roman479" target="_blank" id="btn-cashapp" class="btn-style">CASH APP</a>
+        <a href="https://www.roblox.com/gift-robux?user=59877973" target="_blank" id="btn-robux" class="btn-style">DONATE ROBUX</a>
+        <button class="btn-style" onclick="document.getElementById('games-hub').style.display='block'">GAMES</button>
+    </div>
+
+    <div id="games-hub" class="modal-box">
+        <h2>GAMES</h2>
+        <button class="btn-style" onclick="launchGame('snake')">SNAKE</button>
+        <button class="btn-style" onclick="launchGame('dino')">DINO RUN</button>
+        <button class="btn-style" onclick="launchGame('zombies')">ZOMBIES</button>
+        <button class="btn-style" onclick="launchGame('tag')">GLOBAL TAG (MP)</button>
+        <button class="btn-style" onclick="this.parentElement.style.display='none'">BACK</button>
+    </div>
+
+    <div id="play-area" class="modal-box">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span id="g-name">GAME</span><span id="g-score">0</span>
+        </div>
+        <canvas id="game-canvas" width="400" height="400" onmousedown="handleGameClick(event)"></canvas>
+        <button id="retry-btn" class="btn-style" style="display:none;" onclick="retryGame()">RETRY</button>
+        <button class="btn-style" onclick="quitGame()">EXIT</button>
+    </div>
+
+    <script>
         const firebaseConfig = { databaseURL: "https://cloudzinfo-1f0ec-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -8,11 +128,6 @@
         const canvas = document.getElementById('game-canvas'), ctx = canvas.getContext('2d');
         const cur = document.getElementById('cursor-wrapper');
         let rot = 0;
-
-        // UI for Online Counter (Top Right)
-        const onlineDisplay = document.createElement('div');
-        onlineDisplay.style = "position:fixed; top:20px; right:20px; font-size:0.9rem; color:#0f0; z-index:2000; text-shadow:0 0 8px #0f0; font-weight:bold; letter-spacing:1px;";
-        document.body.appendChild(onlineDisplay);
 
         window.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
         setInterval(() => { rot += 1.5; cur.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`; }, 16);
@@ -45,16 +160,15 @@
                 localStorage.removeItem('c_pass');
             }
 
-            // --- ONLINE COUNTING LOGIC ---
-            // Create a unique entry for this session
+            // USER COUNT TRACKING
             const userRef = db.ref('online/' + myName);
-            userRef.set(true); // Just set to true, no data needed
-            userRef.onDisconnect().remove(); // Auto-remove when tab closes
+            userRef.set(true);
+            userRef.onDisconnect().remove();
 
-            // Listen for changes in the 'online' node
             db.ref('online').on('value', snapshot => {
-                const count = snapshot.numChildren(); // Just get the total number
-                onlineDisplay.innerHTML = `LIVE: ${count} USERS`;
+                const count = snapshot.numChildren();
+                document.getElementById('live-counter').style.display = 'block';
+                document.getElementById('live-counter').innerText = `LIVE: ${count} USERS`;
             });
 
             document.getElementById('auth-modal').style.display='none';
@@ -78,7 +192,7 @@
         function toggleChat() { let c=document.getElementById('chat-window'); c.style.display=(c.style.display==='flex'?'none':'flex'); }
         document.getElementById('chat-input').onkeydown = e => { if(e.key==='Enter' && e.target.value.trim()){ db.ref('chat').push({u:myName, t:e.target.value}); e.target.value=""; }};
 
-        // ... (Remaining Game Logic) ...
+        // GAMES LOGIC (STUBBED FOR SPACE - PREVIOUS LOGIC REMAINS)
         function handleGameClick(e) { if(currentType === 'zombies' && active) { let rect = canvas.getBoundingClientRect(); let angle = Math.atan2((e.clientY-rect.top)-(pY+10), (e.clientX-rect.left)-(pX+10)); bullets.push({x:pX+10, y:pY+10, dx:Math.cos(angle)*7, dy:Math.sin(angle)*7}); } }
         window.onkeydown = e => { keys[e.code] = true; if(currentType === 'snake') { if((e.code==='KeyW'||e.code==='ArrowUp') && sDir!=='D') sDir='U'; if((e.code==='KeyS'||e.code==='ArrowDown') && sDir!=='U') sDir='D'; if((e.code==='KeyA'||e.code==='ArrowLeft') && sDir!=='R') sDir='L'; if((e.code==='KeyD'||e.code==='ArrowRight') && sDir!=='L') sDir='R'; } };
         window.onkeyup = e => keys[e.code] = false;
@@ -101,3 +215,5 @@
             "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
         });
     </script>
+</body>
+</html>
